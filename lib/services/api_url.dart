@@ -19,6 +19,8 @@ class ApiUrl {
   static const String createInventory = "$labTestInventory/create";
   static String getInventoryByLab(String labId) =>
       "$labTestInventory/get-by-lab/$labId";
+  static String getInventoryById(String testId) =>
+      "$labTestInventory/get-by/$testId";
   static String updateInventory(String testId) =>
       "$labTestInventory/update-by/$testId";
   static const String deleteInventory = "$labTestInventory/delete-by-ids";

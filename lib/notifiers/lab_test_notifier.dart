@@ -71,8 +71,10 @@ class MyLabTestNotifier extends AsyncNotifier<List<MyLabTest>> {
   Future<void> updateInventory(String testId, Map<String, dynamic> data) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      final updatedTest = await _services.updateInventory(testId, data);
-      _myTests = _myTests.map((t) => t.testId == testId ? updatedTest : t).toList();
+      await _services.updateInventory(testId, data);
+      final updatedTest = await _services.getInventoryById(testId);
+      _myTests =
+          _myTests.map((t) => t.testId == testId ? updatedTest : t).toList();
       return [..._myTests];
     });
   }

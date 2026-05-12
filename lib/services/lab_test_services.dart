@@ -85,6 +85,19 @@ class LabTestServices {
     }
   }
 
+  Future<MyLabTest> getInventoryById(String testId) async {
+    try {
+      final response = await _dio.get(ApiUrl.getInventoryById(testId));
+      if (response.statusCode == 200) {
+        return MyLabTest.fromJson(response.data);
+      } else {
+        throw Exception('Failed to load inventory details');
+      }
+    } catch (e) {
+      throw Exception('Error fetching inventory details: $e');
+    }
+  }
+
   Future<MyLabTest> updateInventory(String testId, Map<String, dynamic> data) async {
     try {
       final response = await _dio.put(ApiUrl.updateInventory(testId), data: data);
