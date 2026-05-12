@@ -46,7 +46,7 @@ class AppRouter {
       GoRoute(
         path: '/create-test',
         builder: (context, state) {
-          final test = state.extra as CoreLabTest;
+          final test = state.extra as CoreLabTest?;
           return CreateLabTestScreen(test: test);
         },
       ),
