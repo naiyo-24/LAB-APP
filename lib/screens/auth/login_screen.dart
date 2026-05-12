@@ -24,8 +24,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (_currentPage == 0) {
       if (_emailController.text.isNotEmpty) {
         _pageController.nextPage(
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.easeInOut,
+          duration: const Duration(milliseconds: 600),
+          curve: Curves.fastOutSlowIn,
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -74,13 +74,43 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: PageView(
-          controller: _pageController,
-          physics: const NeverScrollableScrollPhysics(),
-          onPageChanged: (index) => setState(() => _currentPage = index),
-          children: [_buildEmailSlide(), _buildPasswordSlide()],
-        ),
+      body: Stack(
+        children: [
+          // Background Decorative Elements
+          Positioned(
+            top: -100,
+            right: -100,
+            child: Container(
+              width: 300,
+              height: 300,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primary.withAlpha(20),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: -50,
+            left: -50,
+            child: Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primaryAccent.withAlpha(15),
+              ),
+            ),
+          ),
+          
+          SafeArea(
+            child: PageView(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              onPageChanged: (index) => setState(() => _currentPage = index),
+              children: [_buildEmailSlide(), _buildPasswordSlide()],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -88,57 +118,97 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget _buildEmailSlide() {
     final authState = ref.watch(authProvider);
     return Padding(
-      padding: const EdgeInsets.all(AppSpacing.screenPadding),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 40), // Top margin
+          const SizedBox(height: 60),
+          Hero(
+            tag: 'app_logo',
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withAlpha(100),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: const Icon(IconsaxPlusBold.health, size: 40, color: Colors.white),
+            ),
+          ),
+          const SizedBox(height: 40),
           const Text('Welcome Back', style: AppTextStyles.header),
           const SizedBox(height: 8),
+          Text(
+            'Log in to manage your pathology lab inventory.',
+            style: AppTextStyles.description.copyWith(color: AppColors.textSecondary),
+          ),
+          const SizedBox(height: 48),
           const Text(
-            'ENTER YOUR REGISTERED EMAIL',
+            'REGISTERED EMAIL',
             style: AppTextStyles.tagline,
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 12),
           TextField(
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-              hintText: 'email@example.com',
-              prefixIcon: Icon(
+            style: AppTextStyles.description.copyWith(fontWeight: FontWeight.w600),
+            decoration: InputDecoration(
+              hintText: 'name@lab.com',
+              hintStyle: AppTextStyles.description.copyWith(color: AppColors.textTertiary),
+              prefixIcon: const Icon(
                 IconsaxPlusLinear.sms,
-                color: AppColors.primaryAccent,
+                color: AppColors.primary,
+                size: 22,
               ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 20),
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 40),
           SizedBox(
             width: double.infinity,
+            height: 60,
             child: ElevatedButton(
               onPressed: authState.isLoading ? null : _nextPage,
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                elevation: 0,
+              ),
               child: authState.isLoading
                   ? const SizedBox(
-                      height: 20,
-                      width: 20,
+                      height: 24,
+                      width: 24,
                       child: CircularProgressIndicator(
-                        strokeWidth: 2,
+                        strokeWidth: 2.5,
                         color: Colors.white,
                       ),
                     )
-                  : const Text('Verify Email'),
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Next Step', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        const SizedBox(width: 8),
+                        const Icon(IconsaxPlusLinear.arrow_right_1, size: 20),
+                      ],
+                    ),
             ),
           ),
-          const SizedBox(height: 24),
+          const Spacer(),
           Center(
             child: RichText(
               text: TextSpan(
-                style: AppTextStyles.description.copyWith(fontSize: 14),
+                style: AppTextStyles.description.copyWith(fontSize: 15),
                 children: [
-                  const TextSpan(text: "Don't have an account? "),
+                  const TextSpan(text: "Don't have an account? ", style: TextStyle(color: AppColors.textSecondary)),
                   TextSpan(
-                    text: 'Sign Up',
+                    text: 'Join Us',
                     style: const TextStyle(
-                      color: AppColors.primaryAccent,
+                      color: AppColors.primary,
                       fontWeight: FontWeight.bold,
                     ),
                     recognizer: TapGestureRecognizer()
@@ -148,6 +218,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
             ),
           ),
+          const SizedBox(height: 20),
         ],
       ),
     );
@@ -156,68 +227,91 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget _buildPasswordSlide() {
     final authState = ref.watch(authProvider);
     return Padding(
-      padding: const EdgeInsets.all(AppSpacing.screenPadding),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 20), // Top margin
-          Row(
-            children: [
-              IconButton(
-                onPressed: () => _pageController.previousPage(
-                  duration: const Duration(milliseconds: 400),
-                  curve: Curves.easeInOut,
-                ),
-                icon: const Icon(IconsaxPlusLinear.arrow_left_1),
-              ),
-              const Text('Security Check', style: AppTextStyles.header),
-            ],
+          const SizedBox(height: 20),
+          IconButton(
+            onPressed: () => _pageController.previousPage(
+              duration: const Duration(milliseconds: 600),
+              curve: Curves.fastOutSlowIn,
+            ),
+            icon: const Icon(IconsaxPlusLinear.arrow_left_1, color: AppColors.textPrimary),
+            style: IconButton.styleFrom(
+              backgroundColor: AppColors.surface,
+              padding: const EdgeInsets.all(12),
+            ),
           ),
+          const SizedBox(height: 40),
+          const Text('Security Check', style: AppTextStyles.header),
           const SizedBox(height: 8),
-          const Padding(
-            padding: EdgeInsets.only(left: 48),
-            child: Text('ENTER YOUR PASSWORD', style: AppTextStyles.tagline),
+          Text(
+            'Secure your access with your lab credentials.',
+            style: AppTextStyles.description.copyWith(color: AppColors.textSecondary),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 48),
+          const Text('PASSWORD', style: AppTextStyles.tagline),
+          const SizedBox(height: 12),
           TextField(
             controller: _passwordController,
             obscureText: true,
-            decoration: const InputDecoration(
+            style: AppTextStyles.description.copyWith(fontWeight: FontWeight.w600),
+            decoration: InputDecoration(
               hintText: '••••••••',
-              prefixIcon: Icon(
+              hintStyle: AppTextStyles.description.copyWith(color: AppColors.textTertiary),
+              prefixIcon: const Icon(
                 IconsaxPlusLinear.lock,
-                color: AppColors.primaryAccent,
+                color: AppColors.primary,
+                size: 22,
+              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 20),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: _showSupport,
+              child: const Text(
+                'Forgot Password?',
+                style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.w600),
               ),
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 40),
           SizedBox(
             width: double.infinity,
+            height: 60,
             child: ElevatedButton(
               onPressed: authState.isLoading ? null : _nextPage,
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                elevation: 0,
+              ),
               child: authState.isLoading
                   ? const SizedBox(
-                      height: 20,
-                      width: 20,
+                      height: 24,
+                      width: 24,
                       child: CircularProgressIndicator(
-                        strokeWidth: 2,
+                        strokeWidth: 2.5,
                         color: Colors.white,
                       ),
                     )
-                  : const Text('Verify & Login'),
+                  : const Text('Verify & Login', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ),
-          const SizedBox(height: 24),
+          const Spacer(),
           Center(
             child: RichText(
               text: TextSpan(
-                style: AppTextStyles.description.copyWith(fontSize: 14),
+                style: AppTextStyles.description.copyWith(fontSize: 15),
                 children: [
-                  const TextSpan(text: "Having trouble? "),
+                  const TextSpan(text: "Having trouble? ", style: TextStyle(color: AppColors.textSecondary)),
                   TextSpan(
                     text: 'Contact Support',
                     style: const TextStyle(
-                      color: AppColors.primaryAccent,
+                      color: AppColors.primary,
                       fontWeight: FontWeight.bold,
                     ),
                     recognizer: TapGestureRecognizer()..onTap = _showSupport,
@@ -226,6 +320,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
             ),
           ),
+          const SizedBox(height: 20),
         ],
       ),
     );
