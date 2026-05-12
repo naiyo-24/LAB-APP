@@ -27,9 +27,9 @@ class SideNavBar extends ConsumerWidget {
         children: [
           // Header
           _buildHeader(user),
-          
+
           const SizedBox(height: 12),
-          
+
           // Nav Items
           Expanded(
             child: SingleChildScrollView(
@@ -52,22 +52,29 @@ class SideNavBar extends ConsumerWidget {
                   ),
                   _buildNavItem(
                     context,
+                    icon: IconsaxPlusLinear.box,
+                    label: 'Package Inventory',
+                    route: '/inventory',
+                    currentRoute: currentRoute,
+                  ),
+                  _buildNavItem(
+                    context,
                     icon: IconsaxPlusLinear.document_text,
-                    label: 'Test Management',
+                    label: 'Available Tests',
                     route: '/test-management',
                     currentRoute: currentRoute,
                   ),
                   _buildNavItem(
                     context,
                     icon: IconsaxPlusLinear.calendar_tick,
-                    label: 'Test Bookings',
+                    label: 'Orders & Bookings',
                     route: '/bookings',
                     currentRoute: currentRoute,
                   ),
                   _buildNavItem(
                     context,
                     icon: IconsaxPlusLinear.card_receive,
-                    label: 'Earning and Payments',
+                    label: 'Earning & Payments',
                     route: '/earnings',
                     currentRoute: currentRoute,
                   ),
@@ -133,7 +140,10 @@ class SideNavBar extends ConsumerWidget {
             backgroundColor: AppColors.primary.withAlpha(50),
             child: Text(
               user?.labName?.substring(0, 1).toUpperCase() ?? 'L',
-              style: AppTextStyles.header.copyWith(fontSize: 24, color: AppColors.primaryAccent),
+              style: AppTextStyles.header.copyWith(
+                fontSize: 24,
+                color: AppColors.primaryAccent,
+              ),
             ),
           ),
           const SizedBox(height: 16),
@@ -174,14 +184,18 @@ class SideNavBar extends ConsumerWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: isActive ? AppColors.primary.withAlpha(25) : Colors.transparent,
+            color: isActive
+                ? AppColors.primary.withAlpha(25)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Row(
             children: [
               Icon(
                 icon,
-                color: isActive ? AppColors.primaryAccent : (isLogout ? AppColors.error : AppColors.textSecondary),
+                color: isActive
+                    ? AppColors.primaryAccent
+                    : (isLogout ? AppColors.error : AppColors.textSecondary),
                 size: 24,
               ),
               const SizedBox(width: 16),
@@ -192,7 +206,9 @@ class SideNavBar extends ConsumerWidget {
                     fontFamily: 'Lexend',
                     fontSize: 15,
                     fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-                    color: isActive ? AppColors.primaryAccent : (isLogout ? AppColors.error : AppColors.textPrimary),
+                    color: isActive
+                        ? AppColors.primaryAccent
+                        : (isLogout ? AppColors.error : AppColors.textPrimary),
                   ),
                 ),
               ),
