@@ -10,6 +10,11 @@ import '../theme/app_theme.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/side_nav_bar.dart';
 import '../screens/lab_test/core_lab_test_list_screen.dart';
+import '../screens/lab_test/my_lab_test_list_screen.dart';
+import '../screens/lab_test/create_lab_test_screen.dart';
+import '../screens/lab_test/lab_test_details_screen.dart';
+import '../models/core_lab_test.dart';
+import '../models/my_lab_test.dart';
 
 class AppRouter {
   static final router = GoRouter(
@@ -32,14 +37,25 @@ class AppRouter {
       ),
       GoRoute(
         path: '/inventory',
-        builder: (context, state) => const PlaceholderScreen(
-          title: 'Test Inventory',
-          subtitle: 'Manage your tests',
-        ),
+        builder: (context, state) => const MyLabTestListScreen(),
       ),
       GoRoute(
         path: '/test-management',
         builder: (context, state) => const CoreLabTestListScreen(),
+      ),
+      GoRoute(
+        path: '/create-test',
+        builder: (context, state) {
+          final test = state.extra as CoreLabTest;
+          return CreateLabTestScreen(test: test);
+        },
+      ),
+      GoRoute(
+        path: '/test-details',
+        builder: (context, state) {
+          final test = state.extra as MyLabTest;
+          return LabTestDetailsScreen(test: test);
+        },
       ),
       GoRoute(
         path: '/bookings',

@@ -13,4 +13,13 @@ class ApiUrl {
   static const String coreLabTests = "$baseUrl/core-tests";
   static const String getAllTests = "$coreLabTests/get-all";
   static String getTestById(String testId) => "$coreLabTests/get-by/$testId";
+
+  // Lab Test Inventory Endpoints
+  static const String labTestInventory = "$baseUrl/lab-test-inventory";
+  static const String createInventory = "$labTestInventory/create";
+  static String getInventoryByLab(String labId) =>
+      "$labTestInventory/get-by-lab/$labId";
+  static String updateInventory(String testId) =>
+      "$labTestInventory/update-by/$testId";
+  static const String deleteInventory = "$labTestInventory/delete-by-ids";
 }

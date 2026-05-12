@@ -50,13 +50,18 @@ class CoreLabTestCard extends StatelessWidget {
                     color: AppColors.background,
                     image: test.testPhotoUrl != null
                         ? DecorationImage(
-                            image: NetworkImage("${ApiUrl.baseUrl}/${test.testPhotoUrl}"),
+                            image: NetworkImage(
+                              "${ApiUrl.baseUrl}/${test.testPhotoUrl}",
+                            ),
                             fit: BoxFit.cover,
                           )
                         : null,
                   ),
                   child: test.testPhotoUrl == null
-                      ? const Icon(IconsaxPlusLinear.box, color: AppColors.textTertiary)
+                      ? const Icon(
+                          IconsaxPlusLinear.box,
+                          color: AppColors.textTertiary,
+                        )
                       : null,
                 ),
                 const SizedBox(width: AppSpacing.cardPadding),
@@ -65,13 +70,13 @@ class CoreLabTestCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        test.testName,
-                        style: AppTextStyles.cardTitle,
-                      ),
+                      Text(test.testName, style: AppTextStyles.cardTitle),
                       const SizedBox(height: 4),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.infoLight,
                           borderRadius: BorderRadius.circular(8),
@@ -87,32 +92,22 @@ class CoreLabTestCard extends StatelessWidget {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          const Icon(IconsaxPlusLinear.document_text, size: 16, color: AppColors.textTertiary),
+                          const Icon(
+                            IconsaxPlusLinear.document_text,
+                            size: 16,
+                            color: AppColors.textTertiary,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             "${test.parameters.length} Parameters",
-                            style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary),
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
                           ),
                         ],
                       ),
                     ],
                   ),
-                ),
-                // Select Button
-                ElevatedButton(
-                  onPressed: () {
-                    // TODO: Implement selection logic
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.textOnPrimary,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  ),
-                  child: const Text("Select"),
                 ),
               ],
             ),

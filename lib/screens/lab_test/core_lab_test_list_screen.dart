@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
+import 'package:lab_app/widgets/side_nav_bar.dart';
 import '../../providers/lab_test_provider.dart';
 import '../../widgets/app_bar.dart';
 import '../../cards/lab_test/core_lab_test_card.dart';
@@ -33,8 +34,10 @@ class _CoreLabTestListScreenState extends ConsumerState<CoreLabTestListScreen> {
       appBar: _isSearching
           ? _buildSearchAppBar()
           : CustomAppBar(
-              title: "Test Management",
-              subtitle: "Manage Lab Tests",
+              showBackButton: false,
+              showDrawer: true,
+              title: "Available Tests",
+              subtitle: "Add Tests to Your Inventory",
               actions: [
                 IconButton(
                   onPressed: () {
@@ -49,6 +52,7 @@ class _CoreLabTestListScreenState extends ConsumerState<CoreLabTestListScreen> {
                 ),
               ],
             ),
+      drawer: const SideNavBar(),
       body: RefreshIndicator(
         onRefresh: () => ref.read(coreLabTestProvider.notifier).refreshTests(),
         child: testsAsync.when(
