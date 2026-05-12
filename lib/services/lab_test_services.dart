@@ -62,6 +62,9 @@ class LabTestServices {
       } else {
         throw Exception('Failed to create inventory');
       }
+    } on DioException catch (e) {
+      final message = e.response?.data?['detail'] ?? e.message ?? 'Unknown error occurred';
+      throw Exception(message);
     } catch (e) {
       throw Exception('Error creating inventory: $e');
     }

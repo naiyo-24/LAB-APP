@@ -6,6 +6,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/lab_test_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/app_bar.dart';
+import '../../cards/lab_test/test_error_card.dart';
 
 class CreateLabTestScreen extends ConsumerStatefulWidget {
   final CoreLabTest test;
@@ -26,7 +27,7 @@ class _CreateLabTestScreenState extends ConsumerState<CreateLabTestScreen> {
   String? _selectedReportTime;
 
   final List<String> _timeOptions = [
-    "within 2 hours",
+    "Within 2 hours",
     "4 hours",
     "10 hours",
     "24 hours",
@@ -74,6 +75,14 @@ class _CreateLabTestScreenState extends ConsumerState<CreateLabTestScreen> {
     await ref.read(myLabTestProvider.notifier).addToInventory(data);
 
     if (mounted) {
+      final state = ref.read(myLabTestProvider);
+      if (state.hasError) {
+        TestErrorCard.show(
+          context,
+          state.error.toString().replaceAll('Exception: ', ''),
+        );
+        return;
+      }
       Navigator.pop(context);
       ScaffoldMessenger.of(
         context,
