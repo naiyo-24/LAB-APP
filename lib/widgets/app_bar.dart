@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import '../theme/app_theme.dart';
 
@@ -59,7 +60,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
     if (showBackButton) {
       return IconButton(
-        onPressed: onBackPress ?? () => Navigator.of(context).pop(),
+        onPressed: onBackPress ??
+            () {
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go('/dashboard'); // Fallback to dashboard if cannot pop
+              }
+            },
         icon: const Icon(
           IconsaxPlusLinear.arrow_left_1,
           color: AppColors.textPrimary,
