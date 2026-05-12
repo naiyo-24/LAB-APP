@@ -52,6 +52,13 @@ class SideNavBar extends ConsumerWidget {
                   ),
                   _buildNavItem(
                     context,
+                    icon: IconsaxPlusLinear.document_text,
+                    label: 'Test Management',
+                    route: '/test-management',
+                    currentRoute: currentRoute,
+                  ),
+                  _buildNavItem(
+                    context,
                     icon: IconsaxPlusLinear.calendar_tick,
                     label: 'Test Bookings',
                     route: '/bookings',

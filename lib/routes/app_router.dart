@@ -9,6 +9,7 @@ import '../screens/profile/update_profile_screen.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/side_nav_bar.dart';
+import '../screens/lab_test/core_lab_test_list_screen.dart';
 
 class AppRouter {
   static final router = GoRouter(
@@ -35,6 +36,10 @@ class AppRouter {
           title: 'Test Inventory',
           subtitle: 'Manage your tests',
         ),
+      ),
+      GoRoute(
+        path: '/test-management',
+        builder: (context, state) => const CoreLabTestListScreen(),
       ),
       GoRoute(
         path: '/bookings',
