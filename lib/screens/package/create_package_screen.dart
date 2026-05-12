@@ -12,7 +12,8 @@ class CreatePackageScreen extends ConsumerStatefulWidget {
   const CreatePackageScreen({super.key});
 
   @override
-  ConsumerState<CreatePackageScreen> createState() => _CreatePackageScreenState();
+  ConsumerState<CreatePackageScreen> createState() =>
+      _CreatePackageScreenState();
 }
 
 class _CreatePackageScreenState extends ConsumerState<CreatePackageScreen> {
@@ -21,7 +22,7 @@ class _CreatePackageScreenState extends ConsumerState<CreatePackageScreen> {
   final _descController = TextEditingController();
   final _marketPriceController = TextEditingController();
   final _discountController = TextEditingController();
-  
+
   final List<MyLabTest> _selectedTests = [];
   final TextEditingController _searchController = TextEditingController();
 
@@ -32,7 +33,7 @@ class _CreatePackageScreenState extends ConsumerState<CreatePackageScreen> {
     "24 hours",
     "2 days",
     "4 days",
-    "7 days"
+    "7 days",
   ];
 
   String? _selectedSampleTime;
@@ -68,7 +69,9 @@ class _CreatePackageScreenState extends ConsumerState<CreatePackageScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedTests.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Add at least one test")));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Add at least one test")));
       return;
     }
 
@@ -114,21 +117,45 @@ class _CreatePackageScreenState extends ConsumerState<CreatePackageScreen> {
               const SizedBox(height: 16),
               Row(
                 children: [
-                  Expanded(child: _buildTextField("Market Price", _marketPriceController, isNumber: true)),
+                  Expanded(
+                    child: _buildTextField(
+                      "Market Price",
+                      _marketPriceController,
+                      isNumber: true,
+                    ),
+                  ),
                   const SizedBox(width: 16),
-                  Expanded(child: _buildTextField("Discount %", _discountController, isNumber: true)),
+                  Expanded(
+                    child: _buildTextField(
+                      "Discount %",
+                      _discountController,
+                      isNumber: true,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
               Row(
                 children: [
-                  Expanded(child: _buildTimeDropdown("Sample Collection", _selectedSampleTime, (val) => setState(() => _selectedSampleTime = val))),
+                  Expanded(
+                    child: _buildTimeDropdown(
+                      "Sample Collection",
+                      _selectedSampleTime,
+                      (val) => setState(() => _selectedSampleTime = val),
+                    ),
+                  ),
                   const SizedBox(width: 16),
-                  Expanded(child: _buildTimeDropdown("Report Delivery", _selectedReportTime, (val) => setState(() => _selectedReportTime = val))),
+                  Expanded(
+                    child: _buildTimeDropdown(
+                      "Report Delivery",
+                      _selectedReportTime,
+                      (val) => setState(() => _selectedReportTime = val),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 24),
-              
+
               _buildSectionTitle("Included Tests (${_selectedTests.length})"),
               const SizedBox(height: 12),
               if (_selectedTests.isEmpty)
@@ -136,12 +163,17 @@ class _CreatePackageScreenState extends ConsumerState<CreatePackageScreen> {
               else
                 Wrap(
                   spacing: 8,
-                  children: _selectedTests.map((test) => Chip(
-                    label: Text(test.coreTestDetails?.testName ?? "Test"),
-                    onDeleted: () => setState(() => _selectedTests.remove(test)),
-                    backgroundColor: AppColors.surface,
-                    side: const BorderSide(color: AppColors.divider),
-                  )).toList(),
+                  children: _selectedTests
+                      .map(
+                        (test) => Chip(
+                          label: Text(test.coreTestDetails?.testName ?? "Test"),
+                          onDeleted: () =>
+                              setState(() => _selectedTests.remove(test)),
+                          backgroundColor: AppColors.surface,
+                          side: const BorderSide(color: AppColors.divider),
+                        ),
+                      )
+                      .toList(),
                 ),
               const SizedBox(height: 24),
 
@@ -149,7 +181,8 @@ class _CreatePackageScreenState extends ConsumerState<CreatePackageScreen> {
               const SizedBox(height: 12),
               TextField(
                 controller: _searchController,
-                onChanged: (val) => ref.read(myLabTestProvider.notifier).searchMyTests(val),
+                onChanged: (val) =>
+                    ref.read(myLabTestProvider.notifier).searchMyTests(val),
                 decoration: const InputDecoration(
                   hintText: "Search your inventory...",
                   prefixIcon: Icon(IconsaxPlusLinear.search_normal),
@@ -169,8 +202,12 @@ class _CreatePackageScreenState extends ConsumerState<CreatePackageScreen> {
                           title: Text(test.coreTestDetails?.testName ?? ""),
                           subtitle: Text("Price: ₹${test.marketPrice}"),
                           trailing: Icon(
-                            isSelected ? IconsaxPlusBold.tick_circle : IconsaxPlusLinear.add_circle,
-                            color: isSelected ? AppColors.success : AppColors.primary,
+                            isSelected
+                                ? IconsaxPlusBold.tick_circle
+                                : IconsaxPlusLinear.add_circle,
+                            color: isSelected
+                                ? AppColors.success
+                                : AppColors.primary,
                           ),
                           onTap: () {
                             setState(() {
@@ -185,7 +222,8 @@ class _CreatePackageScreenState extends ConsumerState<CreatePackageScreen> {
                       },
                     );
                   },
-                  loading: () => const Center(child: CircularProgressIndicator()),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
                   error: (err, stack) => Text("Error: $err"),
                 ),
               ),
@@ -194,7 +232,9 @@ class _CreatePackageScreenState extends ConsumerState<CreatePackageScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _submit,
-                  child: Text("Create Package for ₹${_finalPrice.toStringAsFixed(0)}"),
+                  child: Text(
+                    "Create Package for ₹${_finalPrice.toStringAsFixed(0)}",
+                  ),
                 ),
               ),
             ],
@@ -208,7 +248,12 @@ class _CreatePackageScreenState extends ConsumerState<CreatePackageScreen> {
     return Text(title, style: AppTextStyles.subHeader);
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, {bool isNumber = false, int maxLines = 1}) {
+  Widget _buildTextField(
+    String label,
+    TextEditingController controller, {
+    bool isNumber = false,
+    int maxLines = 1,
+  }) {
     return TextFormField(
       controller: controller,
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
@@ -219,10 +264,21 @@ class _CreatePackageScreenState extends ConsumerState<CreatePackageScreen> {
     );
   }
 
-  Widget _buildTimeDropdown(String label, String? value, ValueChanged<String?> onChanged) {
+  Widget _buildTimeDropdown(
+    String label,
+    String? value,
+    ValueChanged<String?> onChanged,
+  ) {
     return DropdownButtonFormField<String>(
-      value: value,
-      items: _timeOptions.map((time) => DropdownMenuItem(value: time, child: Text(time, style: AppTextStyles.description))).toList(),
+      initialValue: value,
+      items: _timeOptions
+          .map(
+            (time) => DropdownMenuItem(
+              value: time,
+              child: Text(time, style: AppTextStyles.description),
+            ),
+          )
+          .toList(),
       onChanged: onChanged,
       validator: (val) => val == null ? "Required" : null,
       decoration: InputDecoration(labelText: label),

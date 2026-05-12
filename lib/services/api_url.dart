@@ -2,6 +2,8 @@ class ApiUrl {
   static const String baseUrl =
       "http://10.0.2.2:8000"; // Update for real device if needed
 
+  // static const String baseUrl = "http://0.0.0.0:8000";
+
   // Auth and Profile Endpoints
   static const String pathoLabAuth = "$baseUrl/auth/patho-lab";
   static const String signup = "$pathoLabAuth/signup";

@@ -12,7 +12,8 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
   late AnimationController _mainController;
   late AnimationController _particleController;
   final List<Particle> _particles = [];
@@ -33,12 +34,14 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 
     // Initialize random particles
     for (int i = 0; i < 15; i++) {
-      _particles.add(Particle(
-        position: Offset(_random.nextDouble(), _random.nextDouble()),
-        size: _random.nextDouble() * 100 + 50,
-        speed: _random.nextDouble() * 0.02 + 0.01,
-        color: AppColors.primary.withOpacity(_random.nextDouble() * 0.3),
-      ));
+      _particles.add(
+        Particle(
+          position: Offset(_random.nextDouble(), _random.nextDouble()),
+          size: _random.nextDouble() * 100 + 50,
+          speed: _random.nextDouble() * 0.02 + 0.01,
+          color: AppColors.primary.withAlpha(_random.nextInt(77)),
+        ),
+      );
     }
 
     Timer(const Duration(milliseconds: 2500), () {
@@ -81,9 +84,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                       child: const Opacity(
                         opacity: 0.5,
                         child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
+                          decoration: BoxDecoration(shape: BoxShape.circle),
                         ),
                       ),
                     ),
@@ -96,13 +97,11 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
           Positioned.fill(
             child: BackdropFilter(
               filter: ColorFilter.mode(
-                Colors.white.withOpacity(0.4),
+                Colors.white.withAlpha(102),
                 BlendMode.overlay,
               ),
               child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                ),
+                decoration: BoxDecoration(color: Colors.white.withAlpha(51)),
               ),
             ),
           ),
@@ -129,14 +128,15 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                           color: AppColors.primary,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(IconsaxPlusBold.health, size: 60, color: Colors.white),
+                        child: const Icon(
+                          IconsaxPlusBold.health,
+                          size: 60,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24),
-                    const Text(
-                      'MEDY24',
-                      style: AppTextStyles.header,
-                    ),
+                    const Text('MEDY24', style: AppTextStyles.header),
                     const SizedBox(height: 8),
                     const Text(
                       'Your Health, Our Priority',

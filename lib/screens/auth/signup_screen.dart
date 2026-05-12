@@ -124,9 +124,11 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
     final authState = ref.read(authProvider);
     if (authState.user != null) {
+      // ignore: use_build_context_synchronously
       context.go('/login'); // Or dashboard
     } else if (authState.error != null) {
       ScaffoldMessenger.of(
+        // ignore: use_build_context_synchronously
         context,
       ).showSnackBar(SnackBar(content: Text(authState.error!)));
     }
@@ -458,7 +460,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       ),
     );
   }
-
 
   Widget _buildCheckboxTile(
     String title,

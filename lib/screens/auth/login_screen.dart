@@ -51,9 +51,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     final authState = ref.read(authProvider);
     if (authState.user != null) {
+      // ignore: use_build_context_synchronously
       context.go('/profile');
     } else if (authState.error != null) {
       ScaffoldMessenger.of(
+        // ignore: use_build_context_synchronously
         context,
       ).showSnackBar(SnackBar(content: Text(authState.error!)));
     }

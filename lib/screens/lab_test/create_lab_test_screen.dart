@@ -15,7 +15,8 @@ class CreateLabTestScreen extends ConsumerStatefulWidget {
   const CreateLabTestScreen({super.key, this.test});
 
   @override
-  ConsumerState<CreateLabTestScreen> createState() => _CreateLabTestScreenState();
+  ConsumerState<CreateLabTestScreen> createState() =>
+      _CreateLabTestScreenState();
 }
 
 class _CreateLabTestScreenState extends ConsumerState<CreateLabTestScreen> {
@@ -55,9 +56,9 @@ class _CreateLabTestScreenState extends ConsumerState<CreateLabTestScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedSampleTime == null || _selectedReportTime == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please select times")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Please select times")));
       return;
     }
 
@@ -65,9 +66,9 @@ class _CreateLabTestScreenState extends ConsumerState<CreateLabTestScreen> {
     final labId = authState.user?.id;
 
     if (labId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("User not logged in")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("User not logged in")));
       return;
     }
 
@@ -93,9 +94,9 @@ class _CreateLabTestScreenState extends ConsumerState<CreateLabTestScreen> {
         return;
       }
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Test added to inventory")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Test added to inventory")));
     }
   }
 
@@ -107,7 +108,9 @@ class _CreateLabTestScreenState extends ConsumerState<CreateLabTestScreen> {
         title: _selectedTest == null ? "Search Tests" : "Add to Inventory",
         subtitle: _selectedTest?.testName ?? "Browse available tests",
         showBackButton: true,
-        onBackPress: _selectedTest != null ? () => setState(() => _selectedTest = null) : null,
+        onBackPress: _selectedTest != null
+            ? () => setState(() => _selectedTest = null)
+            : null,
       ),
       body: _selectedTest == null ? _buildSearchStep() : _buildFormStep(),
     );
@@ -122,7 +125,8 @@ class _CreateLabTestScreenState extends ConsumerState<CreateLabTestScreen> {
           padding: const EdgeInsets.all(AppSpacing.screenPadding),
           child: TextField(
             controller: _searchController,
-            onChanged: (val) => ref.read(coreLabTestProvider.notifier).searchTests(val),
+            onChanged: (val) =>
+                ref.read(coreLabTestProvider.notifier).searchTests(val),
             decoration: InputDecoration(
               hintText: "Search by test name or category...",
               prefixIcon: const Icon(IconsaxPlusLinear.search_normal),
@@ -142,7 +146,9 @@ class _CreateLabTestScreenState extends ConsumerState<CreateLabTestScreen> {
                 return const Center(child: Text("No available tests found"));
               }
               return ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenPadding),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.screenPadding,
+                ),
                 itemCount: tests.length,
                 itemBuilder: (context, index) {
                   final test = tests[index];
@@ -159,15 +165,25 @@ class _CreateLabTestScreenState extends ConsumerState<CreateLabTestScreen> {
                           color: AppColors.background,
                           image: test.testPhotoUrl != null
                               ? DecorationImage(
-                                  image: NetworkImage("${ApiUrl.baseUrl}/${test.testPhotoUrl}"),
+                                  image: NetworkImage(
+                                    "${ApiUrl.baseUrl}/${test.testPhotoUrl}",
+                                  ),
                                   fit: BoxFit.cover,
                                 )
                               : null,
                         ),
-                        child: test.testPhotoUrl == null ? const Icon(IconsaxPlusLinear.box) : null,
+                        child: test.testPhotoUrl == null
+                            ? const Icon(IconsaxPlusLinear.box)
+                            : null,
                       ),
-                      title: Text(test.testName, style: AppTextStyles.cardTitle),
-                      subtitle: Text(test.testCategory, style: AppTextStyles.caption),
+                      title: Text(
+                        test.testName,
+                        style: AppTextStyles.cardTitle,
+                      ),
+                      subtitle: Text(
+                        test.testCategory,
+                        style: AppTextStyles.caption,
+                      ),
                       trailing: const Icon(IconsaxPlusLinear.arrow_right_3),
                       onTap: () => setState(() => _selectedTest = test),
                     ),
@@ -220,7 +236,8 @@ class _CreateLabTestScreenState extends ConsumerState<CreateLabTestScreen> {
                 labelText: "Price",
                 prefixText: "₹ ",
               ),
-              validator: (value) => (value == null || value.isEmpty) ? "Required" : null,
+              validator: (value) =>
+                  (value == null || value.isEmpty) ? "Required" : null,
             ),
             const SizedBox(height: AppSpacing.elementGap),
 
@@ -264,14 +281,24 @@ class _CreateLabTestScreenState extends ConsumerState<CreateLabTestScreen> {
       decoration: AppCardStyles.sleekCard,
       child: Row(
         children: [
-          const Icon(IconsaxPlusLinear.document_text, color: AppColors.primary, size: 32),
+          const Icon(
+            IconsaxPlusLinear.document_text,
+            color: AppColors.primary,
+            size: 32,
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(_selectedTest?.testName ?? "", style: AppTextStyles.cardTitle),
-                Text(_selectedTest?.testCategory ?? "", style: AppTextStyles.caption),
+                Text(
+                  _selectedTest?.testName ?? "",
+                  style: AppTextStyles.cardTitle,
+                ),
+                Text(
+                  _selectedTest?.testCategory ?? "",
+                  style: AppTextStyles.caption,
+                ),
               ],
             ),
           ),
@@ -289,7 +316,7 @@ class _CreateLabTestScreenState extends ConsumerState<CreateLabTestScreen> {
     final effectiveValue = items.contains(value) ? value : null;
 
     return DropdownButtonFormField<String>(
-      value: effectiveValue,
+      initialValue: effectiveValue,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: const Icon(IconsaxPlusLinear.clock, size: 20),

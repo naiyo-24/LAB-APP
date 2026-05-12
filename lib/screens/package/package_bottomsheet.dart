@@ -530,7 +530,7 @@ class _PackageBottomSheetState extends ConsumerState<PackageBottomSheet> {
     ValueChanged<String?> onChanged,
   ) {
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       items: _timeOptions
           .map(
             (time) => DropdownMenuItem(
