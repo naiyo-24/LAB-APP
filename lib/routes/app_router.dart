@@ -15,6 +15,8 @@ import '../screens/lab_test/create_lab_test_screen.dart';
 import '../screens/lab_test/lab_test_details_screen.dart';
 import '../models/core_lab_test.dart';
 import '../models/my_lab_test.dart';
+import '../screens/package/my_test_packages_screen.dart';
+import '../screens/package/create_package_screen.dart';
 
 class AppRouter {
   static final router = GoRouter(
@@ -56,6 +58,14 @@ class AppRouter {
           final test = state.extra as MyLabTest;
           return LabTestDetailsScreen(test: test);
         },
+      ),
+      GoRoute(
+        path: '/packages',
+        builder: (context, state) => const MyTestPackagesScreen(),
+      ),
+      GoRoute(
+        path: '/create-package',
+        builder: (context, state) => const CreatePackageScreen(),
       ),
       GoRoute(
         path: '/bookings',

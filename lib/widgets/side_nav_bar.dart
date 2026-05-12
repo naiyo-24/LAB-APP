@@ -52,9 +52,9 @@ class SideNavBar extends ConsumerWidget {
                   ),
                   _buildNavItem(
                     context,
-                    icon: IconsaxPlusLinear.box,
+                    icon: IconsaxPlusLinear.archive_add,
                     label: 'Package Inventory',
-                    route: '/inventory',
+                    route: '/packages',
                     currentRoute: currentRoute,
                   ),
                   _buildNavItem(

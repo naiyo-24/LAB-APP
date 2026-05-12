@@ -24,4 +24,16 @@ class ApiUrl {
   static String updateInventory(String testId) =>
       "$labTestInventory/update-by/$testId";
   static const String deleteInventory = "$labTestInventory/delete-by-ids";
+
+  // Test Package Endpoints
+  static const String testPackages = "$baseUrl/test-packages";
+  static const String createPackage = "$testPackages/create";
+  static String getPackagesByLab(String labId) =>
+      "$testPackages/get-by-lab/$labId";
+  static String getPackageById(String packageId) =>
+      "$testPackages/get-by/$packageId";
+  static String updatePackage(String packageId) =>
+      "$testPackages/update-by/$packageId";
+  static String deletePackage(String packageId) =>
+      "$testPackages/delete-by/$packageId";
 }
