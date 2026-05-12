@@ -1,9 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'api_url.dart';
 
 class AuthServices {
   final Dio _dio = Dio();
+  static const String _labIdKey = 'logged_in_lab_id';
 
   AuthServices() {
     _dio.interceptors.add(
@@ -17,6 +20,33 @@ class AuthServices {
         maxWidth: 90,
       ),
     );
+  }
+
+  SharedPreferences? _prefs;
+
+  Future<SharedPreferences> get _getPrefs async {
+    _prefs ??= await SharedPreferences.getInstance();
+    return _prefs!;
+  }
+
+  // Session Management
+  Future<void> saveLabId(String labId) async {
+    debugPrint('Saving session for labId: $labId');
+    final prefs = await _getPrefs;
+    await prefs.setString(_labIdKey, labId);
+  }
+
+  Future<String?> getSavedLabId() async {
+    final prefs = await _getPrefs;
+    final id = prefs.getString(_labIdKey);
+    debugPrint('Retrieved saved labId: $id');
+    return id;
+  }
+
+  Future<void> clearSession() async {
+    debugPrint('Clearing session');
+    final prefs = await _getPrefs;
+    await prefs.remove(_labIdKey);
   }
 
   Future<Response> signup(

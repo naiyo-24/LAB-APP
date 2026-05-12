@@ -21,7 +21,32 @@ class AuthState {
 class AuthNotifier extends StateNotifier<AuthState> {
   final AuthServices _authServices;
 
-  AuthNotifier(this._authServices) : super(AuthState());
+  AuthNotifier(this._authServices) : super(AuthState(isLoading: true)) {
+    loadSession();
+  }
+
+  Future<void> loadSession() async {
+    try {
+      final savedId = await _authServices.getSavedLabId();
+      if (savedId != null) {
+        final response = await _authServices.getProfile(savedId);
+        if (response.statusCode == 200) {
+          state = state.copyWith(
+            isLoading: false,
+            user: User.fromJson(response.data),
+          );
+          return;
+        } else {
+          // If profile fetch fails, clear invalid session
+          await _authServices.clearSession();
+        }
+      }
+    } catch (e) {
+      // Log error if needed
+    } finally {
+      state = state.copyWith(isLoading: false);
+    }
+  }
 
   Future<void> login(String email, String password) async {
     state = state.copyWith(isLoading: true, error: null);
@@ -29,7 +54,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final response = await _authServices.login(email, password);
       if (response.statusCode == 200) {
         final userData = response.data['user'];
-        state = state.copyWith(isLoading: false, user: User.fromJson(userData));
+        final user = User.fromJson(userData);
+        
+        // Save session
+        if (user.id != null) {
+          await _authServices.saveLabId(user.id!);
+        }
+        
+        state = state.copyWith(isLoading: false, user: user);
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -71,10 +103,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
 
       if (response.statusCode == 200) {
-        state = state.copyWith(
-          isLoading: false,
-          user: User.fromJson({...fields, 'lab_id': response.data['lab_id']}),
-        );
+        final user = User.fromJson({...fields, 'lab_id': response.data['lab_id']});
+        
+        // Save session
+        if (user.id != null) {
+          await _authServices.saveLabId(user.id!);
+        }
+        
+        state = state.copyWith(isLoading: false, user: user);
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -90,7 +126,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(user: user);
   }
 
-  void logout() {
+  Future<void> logout() async {
+    await _authServices.clearSession();
     state = AuthState();
   }
 }

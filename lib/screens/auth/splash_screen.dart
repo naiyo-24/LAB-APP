@@ -1,18 +1,20 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import '../../theme/app_theme.dart';
+import '../../providers/auth_provider.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with TickerProviderStateMixin {
   late AnimationController _mainController;
   late AnimationController _particleController;
@@ -44,11 +46,30 @@ class _SplashScreenState extends State<SplashScreen>
       );
     }
 
-    Timer(const Duration(milliseconds: 2500), () {
-      if (mounted) {
-        context.go('/login');
-      }
-    });
+    _handleInitialization();
+  }
+
+  Future<void> _handleInitialization() async {
+    // Wait for splash animation (min 2.5s)
+    await Future.delayed(const Duration(milliseconds: 2500));
+
+    if (!mounted) return;
+
+    // Wait for auth state to finish loading if it's still busy
+    while (ref.read(authProvider).isLoading) {
+      await Future.delayed(const Duration(milliseconds: 100));
+      if (!mounted) return;
+    }
+
+    _performNavigation(ref.read(authProvider).user);
+  }
+
+  void _performNavigation(dynamic user) {
+    if (user != null) {
+      context.go('/profile');
+    } else {
+      context.go('/login');
+    }
   }
 
   @override
