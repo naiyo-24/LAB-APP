@@ -36,7 +36,7 @@ class ProfileOptionsCard extends StatelessWidget {
             title: 'About Us',
             subtitle: 'Learn more about Medy24',
             color: Colors.green,
-            route: '/about',
+            route: '/about-us',
           ),
           _OptionData(
             icon: IconsaxPlusBold.setting_2,

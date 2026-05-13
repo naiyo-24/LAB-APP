@@ -17,6 +17,7 @@ import '../models/core_lab_test.dart';
 import '../models/my_lab_test.dart';
 import '../screens/package/my_test_packages_screen.dart';
 import '../screens/package/create_package_screen.dart';
+import '../screens/about_us/about_us_screen.dart';
 
 class AppRouter {
   static final router = GoRouter(
@@ -95,6 +96,10 @@ class AppRouter {
           title: 'Settings',
           subtitle: 'App preferences',
         ),
+      ),
+      GoRoute(
+        path: '/about-us',
+        builder: (context, state) => const AboutUsScreen(),
       ),
     ],
   );

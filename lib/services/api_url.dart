@@ -38,4 +38,12 @@ class ApiUrl {
       "$testPackages/update-by/$packageId";
   static String deletePackage(String packageId) =>
       "$testPackages/delete-by/$packageId";
+
+  // About Us Endpoints
+  static const String aboutUs = "$baseUrl/about-us";
+  static const String getAboutUsAll = "$aboutUs/get-all";
+  static String getAboutUsById(int id) => "$aboutUs/get-by/$id";
+
+  // Helper for image URLs
+  static String imageUrl(String path) => "$baseUrl/$path";
 }

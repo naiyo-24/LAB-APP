@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -35,13 +36,43 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     )..repeat();
 
     // Initialize random particles
-    for (int i = 0; i < 15; i++) {
+    final List<IconData> medicalIcons = [
+      IconsaxPlusLinear.microscope,
+      IconsaxPlusLinear.hospital,
+      IconsaxPlusLinear.health,
+      IconsaxPlusLinear.activity,
+      IconsaxPlusLinear.document_text,
+      IconsaxPlusLinear.box,
+      IconsaxPlusLinear.archive_add,
+      IconsaxPlusLinear.heart,
+      IconsaxPlusLinear.monitor,
+      IconsaxPlusLinear.info_circle,
+      IconsaxPlusLinear.call,
+      IconsaxPlusLinear.sms,
+      IconsaxPlusLinear.location,
+      IconsaxPlusLinear.verify,
+      IconsaxPlusLinear.receipt_text,
+      IconsaxPlusLinear.money,
+      IconsaxPlusLinear.percentage_square,
+      IconsaxPlusLinear.wallet,
+      IconsaxPlusLinear.clock,
+      IconsaxPlusLinear.timer_1,
+      IconsaxPlusLinear.truck,
+      IconsaxPlusLinear.tick_circle,
+      IconsaxPlusLinear.add_circle,
+      IconsaxPlusLinear.calendar_tick,
+      IconsaxPlusLinear.card_receive,
+      IconsaxPlusLinear.notification,
+    ];
+
+    for (int i = 0; i < 40; i++) {
       _particles.add(
         Particle(
           position: Offset(_random.nextDouble(), _random.nextDouble()),
-          size: _random.nextDouble() * 100 + 50,
-          speed: _random.nextDouble() * 0.02 + 0.01,
-          color: AppColors.primary.withAlpha(_random.nextInt(77)),
+          size: _random.nextDouble() * 25 + 15,
+          speed: _random.nextDouble() * 0.004 + 0.001,
+          color: AppColors.primary.withAlpha(_random.nextInt(30) + 5),
+          icon: medicalIcons[_random.nextInt(medicalIcons.length)],
         ),
       );
     }
@@ -95,19 +126,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   return Positioned(
                     left: p.position.dx * MediaQuery.of(context).size.width,
                     top: p.position.dy * MediaQuery.of(context).size.height,
-                    child: Container(
-                      width: p.size,
-                      height: p.size,
-                      decoration: BoxDecoration(
-                        color: p.color,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Opacity(
-                        opacity: 0.5,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(shape: BoxShape.circle),
-                        ),
-                      ),
+                    child: Transform.rotate(
+                      angle: p.angle + (_particleController.value * 2 * pi),
+                      child: Icon(p.icon, size: p.size, color: p.color),
                     ),
                   );
                 }).toList(),
@@ -117,12 +138,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           // Blur Effect
           Positioned.fill(
             child: BackdropFilter(
-              filter: ColorFilter.mode(
-                Colors.white.withAlpha(102),
-                BlendMode.overlay,
-              ),
+              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
               child: Container(
-                decoration: BoxDecoration(color: Colors.white.withAlpha(51)),
+                color: Colors.white.withAlpha(80),
               ),
             ),
           ),
@@ -140,8 +158,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   children: [
                     Image.asset(
                       'assets/logo/logo.png',
-                      width: 120,
-                      height: 120,
+                      width: 130,
+                      height: 130,
                       errorBuilder: (context, error, stackTrace) => Container(
                         width: 120,
                         height: 120,
@@ -178,6 +196,7 @@ class Particle {
   Offset position;
   double size;
   double speed;
+  IconData icon;
   Color color;
   double angle = Random().nextDouble() * 2 * pi;
 
@@ -186,6 +205,7 @@ class Particle {
     required this.size,
     required this.speed,
     required this.color,
+    required this.icon,
   });
 
   void update() {
