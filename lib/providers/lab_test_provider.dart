@@ -9,6 +9,11 @@ final coreLabTestProvider =
       return LabTestNotifier();
     });
 
+final searchCoreLabTestProvider =
+    AsyncNotifierProvider<SearchCoreLabTestNotifier, List<CoreLabTest>>(() {
+      return SearchCoreLabTestNotifier();
+    });
+
 final myLabTestProvider =
     AsyncNotifierProvider<MyLabTestNotifier, List<MyLabTest>>(() {
       return MyLabTestNotifier();

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:dio/dio.dart';
 import '../models/user.dart';
 import '../services/auth_services.dart';
 
@@ -69,7 +70,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      String errorMessage = "Login failed";
+      if (e is DioException && e.response?.data is Map) {
+        errorMessage = e.response?.data['detail'] ?? errorMessage;
+      }
+      state = state.copyWith(isLoading: false, error: errorMessage);
     }
   }
 
@@ -118,7 +123,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      String errorMessage = "Signup failed";
+      if (e is DioException && e.response?.data is Map) {
+        errorMessage = e.response?.data['detail'] ?? errorMessage;
+      }
+      state = state.copyWith(isLoading: false, error: errorMessage);
     }
   }
 

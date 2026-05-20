@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:lab_app/widgets/side_nav_bar.dart';
 import '../../providers/lab_test_provider.dart';
@@ -16,7 +17,6 @@ class CoreLabTestListScreen extends ConsumerStatefulWidget {
 }
 
 class _CoreLabTestListScreenState extends ConsumerState<CoreLabTestListScreen> {
-  bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -31,27 +31,23 @@ class _CoreLabTestListScreenState extends ConsumerState<CoreLabTestListScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: _isSearching
-          ? _buildSearchAppBar()
-          : CustomAppBar(
-              showBackButton: false,
-              showDrawer: true,
-              title: "Available Tests",
-              subtitle: "Add Tests to Your Inventory",
-              actions: [
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _isSearching = true;
-                    });
-                  },
-                  icon: const Icon(
-                    IconsaxPlusLinear.search_normal,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ],
+      appBar: CustomAppBar(
+        showBackButton: false,
+        showDrawer: true,
+        title: "Available Tests",
+        subtitle: "Add Tests to Your Inventory",
+        actions: [
+          IconButton(
+            onPressed: () {
+              context.push('/search-core-tests');
+            },
+            icon: const Icon(
+              IconsaxPlusLinear.search_normal,
+              color: AppColors.textPrimary,
             ),
+          ),
+        ],
+      ),
       drawer: const SideNavBar(),
       body: RefreshIndicator(
         onRefresh: () => ref.read(coreLabTestProvider.notifier).refreshTests(),
@@ -72,52 +68,6 @@ class _CoreLabTestListScreenState extends ConsumerState<CoreLabTestListScreen> {
           error: (err, stack) => Center(child: Text("Error: $err")),
         ),
       ),
-    );
-  }
-
-  PreferredSizeWidget _buildSearchAppBar() {
-    return AppBar(
-      backgroundColor: Colors.white,
-      elevation: 2,
-      leading: IconButton(
-        onPressed: () {
-          setState(() {
-            _isSearching = false;
-            _searchController.clear();
-            ref.read(coreLabTestProvider.notifier).searchTests("");
-          });
-        },
-        icon: const Icon(
-          IconsaxPlusLinear.arrow_left_1,
-          color: AppColors.textPrimary,
-        ),
-      ),
-      title: TextField(
-        controller: _searchController,
-        autofocus: true,
-        decoration: const InputDecoration(
-          hintText: "Search by name or category...",
-          border: InputBorder.none,
-          hintStyle: TextStyle(color: Colors.grey),
-        ),
-        onChanged: (value) {
-          ref.read(coreLabTestProvider.notifier).searchTests(value);
-        },
-      ),
-      actions: [
-        if (_searchController.text.isNotEmpty)
-          IconButton(
-            onPressed: () {
-              _searchController.clear();
-              ref.read(coreLabTestProvider.notifier).searchTests("");
-              setState(() {});
-            },
-            icon: const Icon(
-              IconsaxPlusLinear.close_circle,
-              color: Colors.grey,
-            ),
-          ),
-      ],
     );
   }
 }

@@ -41,6 +41,27 @@ class LabTestNotifier extends AsyncNotifier<List<CoreLabTest>> {
   }
 }
 
+class SearchCoreLabTestNotifier extends AsyncNotifier<List<CoreLabTest>> {
+  final LabTestServices _services = LabTestServices();
+
+  @override
+  FutureOr<List<CoreLabTest>> build() async {
+    return [];
+  }
+
+  Future<void> searchCoreTests(String query) async {
+    if (query.trim().isEmpty) {
+      state = const AsyncValue.data([]);
+      return;
+    }
+
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      return await _services.searchCoreTests(name: query);
+    });
+  }
+}
+
 class MyLabTestNotifier extends AsyncNotifier<List<MyLabTest>> {
   final LabTestServices _services = LabTestServices();
   List<MyLabTest> _myTests = [];

@@ -54,7 +54,7 @@ class _MyLabTestListScreenState extends ConsumerState<MyLabTestListScreen> {
               actions: [
                 IconButton(
                   onPressed: () {
-                    context.push('/create-test');
+                    context.push('/test-management');
                   },
                   icon: const Icon(IconsaxPlusLinear.add, color: AppColors.textPrimary),
                 ),

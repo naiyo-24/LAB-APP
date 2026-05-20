@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/auth_provider.dart';
+import '../../cards/auth/error_bottomsheet.dart';
 import '../../cards/auth/contact_support_bottomsheet.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -54,10 +55,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       // ignore: use_build_context_synchronously
       context.go('/profile');
     } else if (authState.error != null) {
-      ScaffoldMessenger.of(
+      // ignore: use_build_context_synchronously
+      showModalBottomSheet(
         // ignore: use_build_context_synchronously
-        context,
-      ).showSnackBar(SnackBar(content: Text(authState.error!)));
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => ErrorBottomSheet(
+          title: 'Login Failed',
+          message: authState.error!,
+          onContactSupport: _showSupport,
+        ),
+      );
     }
   }
 
@@ -148,7 +157,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             'Log in to manage your pathology lab inventory.',
             style: AppTextStyles.description.copyWith(color: AppColors.textSecondary),
           ),
-          const SizedBox(height: 48),
+          const SizedBox(height: 18),
           const Text(
             'REGISTERED EMAIL',
             style: AppTextStyles.tagline,
@@ -169,7 +178,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               contentPadding: const EdgeInsets.symmetric(vertical: 20),
             ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 20),
           SizedBox(
             width: double.infinity,
             height: 60,
@@ -198,7 +207,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
             ),
           ),
-          const Spacer(),
+          const SizedBox(height: 20),
           Center(
             child: RichText(
               text: TextSpan(
@@ -237,7 +246,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               duration: const Duration(milliseconds: 600),
               curve: Curves.fastOutSlowIn,
             ),
-            icon: const Icon(IconsaxPlusLinear.arrow_left_1, color: AppColors.textPrimary),
+            icon: const Icon(IconsaxPlusLinear.arrow_left, color: AppColors.textPrimary),
             style: IconButton.styleFrom(
               backgroundColor: AppColors.surface,
               padding: const EdgeInsets.all(12),
@@ -250,7 +259,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             'Secure your access with your lab credentials.',
             style: AppTextStyles.description.copyWith(color: AppColors.textSecondary),
           ),
-          const SizedBox(height: 48),
+          const SizedBox(height: 18),
           const Text('PASSWORD', style: AppTextStyles.tagline),
           const SizedBox(height: 12),
           TextField(
@@ -268,18 +277,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               contentPadding: const EdgeInsets.symmetric(vertical: 20),
             ),
           ),
-          const SizedBox(height: 12),
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              onPressed: _showSupport,
-              child: const Text(
-                'Forgot Password?',
-                style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.w600),
-              ),
-            ),
-          ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 20),
+          
           SizedBox(
             width: double.infinity,
             height: 60,
@@ -301,7 +300,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   : const Text('Verify & Login', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ),
-          const Spacer(),
+          const SizedBox(height: 20),
           Center(
             child: RichText(
               text: TextSpan(

@@ -50,14 +50,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Text(
                   title,
                   style: AppTextStyles.subHeader.copyWith(
-                    fontSize: 18,
+                    fontSize: 20,
                     fontWeight: FontWeight.w800,
                     letterSpacing: -0.5,
                     color: AppColors.textPrimary,
                   ),
                 ),
                 if (subtitle != null) ...[
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 4),
                   Text(
                     subtitle!.toUpperCase(),
                     style: AppTextStyles.tagline.copyWith(
@@ -92,7 +92,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           child: const Icon(
             IconsaxPlusLinear.menu,
-            color: AppColors.primary,
+            color: AppColors.silver,
             size: 20,
           ),
         ),

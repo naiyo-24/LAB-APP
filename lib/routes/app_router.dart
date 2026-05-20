@@ -13,6 +13,7 @@ import '../screens/lab_test/core_lab_test_list_screen.dart';
 import '../screens/lab_test/my_lab_test_list_screen.dart';
 import '../screens/lab_test/create_lab_test_screen.dart';
 import '../screens/lab_test/lab_test_details_screen.dart';
+import '../screens/lab_test/search_core_lab_tests_screen.dart';
 import '../models/core_lab_test.dart';
 import '../models/my_lab_test.dart';
 import '../screens/package/my_test_packages_screen.dart';
@@ -47,9 +48,13 @@ class AppRouter {
         builder: (context, state) => const CoreLabTestListScreen(),
       ),
       GoRoute(
+        path: '/search-core-tests',
+        builder: (context, state) => const SearchCoreLabTestsScreen(),
+      ),
+      GoRoute(
         path: '/create-test',
         builder: (context, state) {
-          final test = state.extra as CoreLabTest?;
+          final test = state.extra as CoreLabTest;
           return CreateLabTestScreen(test: test);
         },
       ),

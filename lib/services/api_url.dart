@@ -14,6 +14,7 @@ class ApiUrl {
   // Lab Test Endpoibts
   static const String coreLabTests = "$baseUrl/core-tests";
   static const String getAllTests = "$coreLabTests/get-all";
+  static const String searchCoreTests = "$coreLabTests/search";
   static String getTestById(String testId) => "$coreLabTests/get-by/$testId";
 
   // Lab Test Inventory Endpoints

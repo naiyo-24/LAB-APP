@@ -39,6 +39,35 @@ class LabTestServices {
     }
   }
 
+  Future<List<CoreLabTest>> searchCoreTests({String? name, String? category, int skip = 0, int limit = 20}) async {
+    try {
+      final Map<String, dynamic> queryParams = {
+        'skip': skip,
+        'limit': limit,
+      };
+      if (name != null && name.isNotEmpty) queryParams['name'] = name;
+      if (category != null && category.isNotEmpty) queryParams['category'] = category;
+
+      // Ensure the endpoint is correct based on FastAPI (e.g., /core-tests/search)
+      final response = await _dio.get(
+        ApiUrl.searchCoreTests, 
+        queryParameters: queryParams,
+      );
+
+      if (response.statusCode == 200) {
+        final List data = response.data['data'];
+        return data.map((json) => CoreLabTest.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to search core lab tests');
+      }
+    } on DioException catch (e) {
+      final message = e.response?.data?['detail'] ?? e.message ?? 'Unknown error occurred';
+      throw Exception(message);
+    } catch (e) {
+      throw Exception('Error searching core lab tests: $e');
+    }
+  }
+
   Future<CoreLabTest> getCoreTestById(String testId) async {
     try {
       final response = await _dio.get(ApiUrl.getTestById(testId));

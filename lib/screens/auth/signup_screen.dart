@@ -9,6 +9,8 @@ import 'package:file_picker/file_picker.dart';
 import '../../notifiers/auth_notifier.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/auth_provider.dart';
+import '../../cards/auth/error_bottomsheet.dart';
+import '../../cards/auth/contact_support_bottomsheet.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
@@ -110,28 +112,42 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       'whatsapp_number': _whatsappController.text,
       'terms_conditions_accepted': _termsAccepted,
       'privacy_policy_accepted': _privacyAccepted,
+      'lab_logo_path': _labLogo?.path,
+      'registration_certificate_path': _regCert?.path,
+      'bank_passbook_path': _bankPassbook?.path,
     };
-
-    final filePaths = [
-      if (_labLogo != null) _labLogo!.path,
-      if (_regCert != null) _regCert!.path,
-      if (_bankPassbook != null) _bankPassbook!.path,
-    ];
 
     await ref
         .read(authProvider.notifier)
-        .signup(data: data, filePaths: filePaths);
+        .signup(data: data, filePaths: []);
 
     final authState = ref.read(authProvider);
     if (authState.user != null) {
       // ignore: use_build_context_synchronously
-      context.go('/login'); // Or dashboard
+      context.go('/login');
     } else if (authState.error != null) {
-      ScaffoldMessenger.of(
+      // ignore: use_build_context_synchronously
+      showModalBottomSheet(
         // ignore: use_build_context_synchronously
-        context,
-      ).showSnackBar(SnackBar(content: Text(authState.error!)));
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => ErrorBottomSheet(
+          title: 'Registration Failed',
+          message: authState.error!,
+          onContactSupport: _showSupport,
+        ),
+      );
     }
+  }
+
+  void _showSupport() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const ContactSupportBottomSheet(),
+    );
   }
 
   @override
