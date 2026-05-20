@@ -26,7 +26,7 @@ class _PackageBottomSheetState extends ConsumerState<PackageBottomSheet> {
   late TextEditingController _discountController;
   late List<dynamic> _currentTests;
   final List<String> _timeOptions = [
-    "within 2 hours",
+    "Within 2 hours",
     "4 hours",
     "10 hours",
     "24 hours",
@@ -530,12 +530,17 @@ class _PackageBottomSheetState extends ConsumerState<PackageBottomSheet> {
     ValueChanged<String?> onChanged,
   ) {
     return DropdownButtonFormField<String>(
+      isExpanded: true,
       initialValue: value,
       items: _timeOptions
           .map(
             (time) => DropdownMenuItem(
               value: time,
-              child: Text(time, style: AppTextStyles.description),
+              child: Text(
+                time, 
+                style: AppTextStyles.description,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           )
           .toList(),

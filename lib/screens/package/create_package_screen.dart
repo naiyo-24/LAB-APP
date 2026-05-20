@@ -27,7 +27,7 @@ class _CreatePackageScreenState extends ConsumerState<CreatePackageScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   final List<String> _timeOptions = [
-    "within 2 hours",
+    "Within 2 hours",
     "4 hours",
     "10 hours",
     "24 hours",
@@ -102,150 +102,239 @@ class _CreatePackageScreenState extends ConsumerState<CreatePackageScreen> {
         subtitle: "Bundle tests together",
         showBackButton: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.screenPadding),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildSectionTitle("Package Details"),
-              const SizedBox(height: 16),
-              _buildTextField("Package Name", _nameController),
-              const SizedBox(height: 16),
-              _buildTextField("Description", _descController, maxLines: 2),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildTextField(
-                      "Market Price",
-                      _marketPriceController,
-                      isNumber: true,
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(AppSpacing.screenPadding),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Package Details", style: AppTextStyles.subHeader),
+                    const SizedBox(height: AppSpacing.elementGap),
+                    
+                    Container(
+                      padding: const EdgeInsets.all(AppSpacing.cardPadding),
+                      decoration: AppCardStyles.sleekCard,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildTextField(
+                            "Package Name", 
+                            _nameController,
+                            icon: IconsaxPlusLinear.box,
+                            hintText: "e.g., Full Body Checkup",
+                          ),
+                          const SizedBox(height: AppSpacing.elementGap),
+                          _buildTextField(
+                            "Description", 
+                            _descController, 
+                            maxLines: 5,
+                            icon: IconsaxPlusLinear.document_text_1,
+                            hintText: "Included tests and benefits...",
+                          ),
+                          const SizedBox(height: AppSpacing.elementGap),
+                          _buildTextField(
+                            "MRP in INR",
+                            _marketPriceController,
+                            isNumber: true,
+                            icon: IconsaxPlusLinear.tag,
+                            hintText: "₹ 0.00",
+                          ),
+                          const SizedBox(height: AppSpacing.elementGap),
+                          _buildTextField(
+                            "Discount %",
+                            _discountController,
+                            isNumber: true,
+                            icon: IconsaxPlusLinear.discount_shape,
+                            hintText: "0 %",
+                          ),
+                          const SizedBox(height: AppSpacing.elementGap),
+                          _buildTimeDropdown(
+                            "Sample Collection Time",
+                            _selectedSampleTime,
+                            (val) => setState(() => _selectedSampleTime = val),
+                            icon: IconsaxPlusLinear.clock,
+                          ),
+                          const SizedBox(height: AppSpacing.elementGap),
+                          _buildTimeDropdown(
+                            "Report Delivery Time",
+                            _selectedReportTime,
+                            (val) => setState(() => _selectedReportTime = val),
+                            icon: IconsaxPlusLinear.document_forward,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _buildTextField(
-                      "Discount %",
-                      _discountController,
-                      isNumber: true,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildTimeDropdown(
-                      "Sample Collection",
-                      _selectedSampleTime,
-                      (val) => setState(() => _selectedSampleTime = val),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _buildTimeDropdown(
-                      "Report Delivery",
-                      _selectedReportTime,
-                      (val) => setState(() => _selectedReportTime = val),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
+                    const SizedBox(height: AppSpacing.sectionGap),
 
-              _buildSectionTitle("Included Tests (${_selectedTests.length})"),
-              const SizedBox(height: 12),
-              if (_selectedTests.isEmpty)
-                const Text("No tests added yet", style: AppTextStyles.caption)
-              else
-                Wrap(
-                  spacing: 8,
-                  children: _selectedTests
-                      .map(
-                        (test) => Chip(
-                          label: Text(test.coreTestDetails?.testName ?? "Test"),
-                          onDeleted: () =>
-                              setState(() => _selectedTests.remove(test)),
-                          backgroundColor: AppColors.surface,
-                          side: const BorderSide(color: AppColors.divider),
+                    Text("Included Tests (${_selectedTests.length})", style: AppTextStyles.subHeader),
+                    const SizedBox(height: AppSpacing.elementGap),
+                    if (_selectedTests.isEmpty)
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(AppSpacing.cardPadding),
+                        decoration: BoxDecoration(
+                          color: AppColors.surface,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: AppColors.divider.withOpacity(0.5)),
+                        ),
+                        child: Text(
+                          "No tests added yet.\nSearch and select tests from inventory below.",
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary),
                         ),
                       )
-                      .toList(),
-                ),
-              const SizedBox(height: 24),
+                    else
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: _selectedTests
+                            .map(
+                              (test) => Chip(
+                                label: Text(test.coreTestDetails?.testName ?? "Test", style: AppTextStyles.description),
+                                onDeleted: () =>
+                                    setState(() => _selectedTests.remove(test)),
+                                backgroundColor: AppColors.surface,
+                                deleteIcon: const Icon(IconsaxPlusLinear.close_circle, size: 20, color: AppColors.error),
+                                side: const BorderSide(color: AppColors.divider),
+                                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    const SizedBox(height: AppSpacing.sectionGap),
 
-              _buildSectionTitle("Add Tests from Inventory"),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _searchController,
-                onChanged: (val) =>
-                    ref.read(myLabTestProvider.notifier).searchMyTests(val),
-                decoration: const InputDecoration(
-                  hintText: "Search your inventory...",
-                  prefixIcon: Icon(IconsaxPlusLinear.search_normal),
+                    Text("Add Tests from Inventory", style: AppTextStyles.subHeader),
+                    const SizedBox(height: AppSpacing.elementGap),
+                    TextFormField(
+                      controller: _searchController,
+                      onChanged: (val) =>
+                          ref.read(myLabTestProvider.notifier).searchMyTests(val),
+                      decoration: const InputDecoration(
+                        hintText: "Search your inventory...",
+                        prefixIcon: Icon(IconsaxPlusLinear.search_normal, color: AppColors.primary),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.elementGap),
+                    
+                    Container(
+                      height: 320,
+                      decoration: AppCardStyles.sleekCard,
+                      clipBehavior: Clip.antiAlias,
+                      child: myTestsAsync.when(
+                        data: (tests) {
+                          if (tests.isEmpty) {
+                            return const Center(child: Text("No tests found"));
+                          }
+                          return ListView.separated(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            itemCount: tests.length,
+                            separatorBuilder: (context, index) => const Divider(height: 1, color: AppColors.divider),
+                            itemBuilder: (context, index) {
+                              final test = tests[index];
+                              final isSelected = _selectedTests.contains(test);
+                              return ListTile(
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                title: Text(
+                                  test.coreTestDetails?.testName ?? "",
+                                  style: AppTextStyles.description.copyWith(fontWeight: FontWeight.w600),
+                                ),
+                                subtitle: Text(
+                                  "₹${test.marketPrice}",
+                                  style: AppTextStyles.caption.copyWith(color: AppColors.success),
+                                ),
+                                trailing: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: isSelected ? AppColors.success.withOpacity(0.1) : AppColors.surface,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: isSelected ? AppColors.success : AppColors.divider,
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    isSelected
+                                        ? IconsaxPlusBold.tick_circle
+                                        : IconsaxPlusLinear.add,
+                                    size: 20,
+                                    color: isSelected
+                                        ? AppColors.success
+                                        : AppColors.textSecondary,
+                                  ),
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    if (isSelected) {
+                                      _selectedTests.remove(test);
+                                    } else {
+                                      _selectedTests.add(test);
+                                    }
+                                  });
+                                },
+                              );
+                            },
+                          );
+                        },
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
+                        error: (err, stack) => Center(child: Text("Error: $err")),
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 48), // Padding below content
+                  ],
                 ),
               ),
-              const SizedBox(height: 12),
-              SizedBox(
-                height: 300,
-                child: myTestsAsync.when(
-                  data: (tests) {
-                    return ListView.builder(
-                      itemCount: tests.length,
-                      itemBuilder: (context, index) {
-                        final test = tests[index];
-                        final isSelected = _selectedTests.contains(test);
-                        return ListTile(
-                          title: Text(test.coreTestDetails?.testName ?? ""),
-                          subtitle: Text("Price: ₹${test.marketPrice}"),
-                          trailing: Icon(
-                            isSelected
-                                ? IconsaxPlusBold.tick_circle
-                                : IconsaxPlusLinear.add_circle,
-                            color: isSelected
-                                ? AppColors.success
-                                : AppColors.primary,
-                          ),
-                          onTap: () {
-                            setState(() {
-                              if (isSelected) {
-                                _selectedTests.remove(test);
-                              } else {
-                                _selectedTests.add(test);
-                              }
-                            });
-                          },
-                        );
-                      },
-                    );
-                  },
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
-                  error: (err, stack) => Text("Error: $err"),
-                ),
-              ),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _submit,
-                  child: Text(
-                    "Create Package for ₹${_finalPrice.toStringAsFixed(0)}",
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+          _buildActionBottom(),
+        ],
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Text(title, style: AppTextStyles.subHeader);
+  Widget _buildActionBottom() {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.screenPadding),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            offset: const Offset(0, -4),
+            blurRadius: 16,
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: _submit,
+            icon: const Icon(IconsaxPlusLinear.add),
+            label: Text("Create Package for ₹${_finalPrice.toStringAsFixed(0)}"),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              backgroundColor: AppColors.primary,
+              foregroundColor: AppColors.textOnPrimary,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppSpacing.borderRadius),
+              ),
+              textStyle: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildTextField(
@@ -253,6 +342,8 @@ class _CreatePackageScreenState extends ConsumerState<CreatePackageScreen> {
     TextEditingController controller, {
     bool isNumber = false,
     int maxLines = 1,
+    IconData? icon,
+    String? hintText,
   }) {
     return TextFormField(
       controller: controller,
@@ -260,16 +351,25 @@ class _CreatePackageScreenState extends ConsumerState<CreatePackageScreen> {
       maxLines: maxLines,
       onChanged: (_) => setState(() {}),
       validator: (val) => (val == null || val.isEmpty) ? "Required" : null,
-      decoration: InputDecoration(labelText: label),
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hintText,
+        alignLabelWithHint: maxLines > 1,
+        prefixIcon: icon != null 
+            ? Icon(icon, color: AppColors.primary, size: 22)
+            : null,
+      ),
     );
   }
 
   Widget _buildTimeDropdown(
     String label,
     String? value,
-    ValueChanged<String?> onChanged,
-  ) {
+    ValueChanged<String?> onChanged, {
+    IconData? icon,
+  }) {
     return DropdownButtonFormField<String>(
+      isExpanded: true,
       initialValue: value,
       items: _timeOptions
           .map(
@@ -281,7 +381,11 @@ class _CreatePackageScreenState extends ConsumerState<CreatePackageScreen> {
           .toList(),
       onChanged: onChanged,
       validator: (val) => val == null ? "Required" : null,
-      decoration: InputDecoration(labelText: label),
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: icon != null ? Icon(icon, color: AppColors.primary, size: 22) : null,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      ),
     );
   }
 }

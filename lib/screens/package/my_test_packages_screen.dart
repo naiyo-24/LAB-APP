@@ -8,7 +8,7 @@ import '../../theme/app_theme.dart';
 import '../../widgets/app_bar.dart';
 import '../../widgets/side_nav_bar.dart';
 import '../../cards/package/package_card.dart';
-import 'package_bottomsheet.dart';
+import '../../cards/package/package_bottomsheet.dart';
 
 class MyTestPackagesScreen extends ConsumerStatefulWidget {
   const MyTestPackagesScreen({super.key});
