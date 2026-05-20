@@ -48,17 +48,19 @@ class CoreLabTestBottomSheet extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          width: 120,
-                          height: 120,
+                          width: 80,
+                          height: 80,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                              AppSpacing.cardRadius,
+                            borderRadius: BorderRadius.circular(20),
+                            color: AppColors.primary.withOpacity(0.15),
+                            border: Border.all(
+                              color: AppColors.primary.withOpacity(0.3),
+                              width: 1.5,
                             ),
-                            color: AppColors.background,
                             image: test.testPhotoUrl != null
                                 ? DecorationImage(
                                     image: NetworkImage(
-                                      "${ApiUrl.baseUrl}/${test.testPhotoUrl}",
+                                      ApiUrl.imageUrl(test.testPhotoUrl!),
                                     ),
                                     fit: BoxFit.cover,
                                   )
@@ -66,55 +68,39 @@ class CoreLabTestBottomSheet extends StatelessWidget {
                           ),
                           child: test.testPhotoUrl == null
                               ? const Icon(
-                                  IconsaxPlusLinear.box,
+                                  IconsaxPlusLinear.monitor,
                                   size: 40,
-                                  color: AppColors.textTertiary,
+                                  color: AppColors.primary,
                                 )
                               : null,
                         ),
-                        const SizedBox(width: AppSpacing.elementGap),
+                        const SizedBox(width: AppSpacing.cardPadding),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 test.testName,
-                                style: AppTextStyles.subHeader.copyWith(
-                                  fontSize: 22,
+                                style: AppTextStyles.header.copyWith(
+                                  fontSize: 24,
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.infoLight,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text(
-                                  test.testCategory,
-                                  style: AppTextStyles.caption.copyWith(
-                                    color: AppColors.info,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              Row(
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
                                 children: [
-                                  const Icon(
-                                    IconsaxPlusLinear.tag,
-                                    size: 18,
-                                    color: AppColors.textTertiary,
+                                  _buildBadge(
+                                    test.testCategory,
+                                    IconsaxPlusLinear.category,
+                                    AppColors.info,
+                                    AppColors.info.withOpacity(0.15),
                                   ),
-                                  const SizedBox(width: 6),
-                                  Text(
+                                  _buildBadge(
                                     test.sampleType,
-                                    style: AppTextStyles.caption.copyWith(
-                                      color: AppColors.textSecondary,
-                                    ),
+                                    IconsaxPlusLinear.drop,
+                                    AppColors.error,
+                                    AppColors.error.withOpacity(0.15),
                                   ),
                                 ],
                               ),
@@ -127,113 +113,187 @@ class CoreLabTestBottomSheet extends StatelessWidget {
                     // Description
                     if (test.description != null &&
                         test.description!.isNotEmpty) ...[
-                      const Text("Description", style: AppTextStyles.cardTitle),
+                      const Text("About the Test", style: AppTextStyles.cardTitle),
                       const SizedBox(height: AppSpacing.elementGap),
-                      Text(test.description!, style: AppTextStyles.description),
+                      Text(
+                        test.description!,
+                        style: AppTextStyles.description.copyWith(
+                          height: 1.6,
+                        ),
+                      ),
                       const SizedBox(height: AppSpacing.sectionGap),
                     ],
                     // Parameters
-                    const Text(
-                      "Test Parameters",
-                      style: AppTextStyles.cardTitle,
+                    Row(
+                      children: [
+                        const Icon(IconsaxPlusLinear.health, color: AppColors.primary, size: 22),
+                        const SizedBox(width: 8),
+                        Text(
+                          "Test Parameters",
+                          style: AppTextStyles.cardTitle.copyWith(color: AppColors.primary),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: AppSpacing.elementGap),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: test.parameters.map((param) {
-                        return Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.background,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppColors.divider),
-                          ),
-                          child: Text(
-                            param,
-                            style: AppTextStyles.caption.copyWith(
-                              color: AppColors.textPrimary,
+                    Container(
+                      padding: const EdgeInsets.all(AppSpacing.cardPadding),
+                      decoration: AppCardStyles.sleekCard.copyWith(
+                        color: AppColors.background,
+                      ),
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: test.parameters.map((param) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 10,
                             ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: AppSpacing.sectionGap),
-                    // Precautions
-                    if (test.precautions.isNotEmpty) ...[
-                      const Text("Precautions", style: AppTextStyles.cardTitle),
-                      const SizedBox(height: AppSpacing.elementGap),
-                      Column(
-                        children: test.precautions.map((precaution) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Icon(
-                                  IconsaxPlusLinear.info_circle,
-                                  size: 18,
-                                  color: AppColors.warning,
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    precaution,
-                                    style: AppTextStyles.caption.copyWith(
-                                      color: AppColors.textSecondary,
-                                    ),
-                                  ),
+                            decoration: BoxDecoration(
+                              color: AppColors.surface,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.04),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
                                 ),
                               ],
+                            ),
+                            child: Text(
+                              param,
+                              style: AppTextStyles.caption.copyWith(
+                                color: AppColors.textPrimary,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           );
                         }).toList(),
                       ),
-                      const SizedBox(height: AppSpacing.sectionGap),
-                    ],
-                    // Add to Inventory Button
-                    ElevatedButton(
-                      onPressed: () {
-                        context.pop(); // Close bottom sheet
-                        context.push('/create-test', extra: test);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryAccent,
-                        foregroundColor: AppColors.textOnPrimary,
-                        padding: const EdgeInsets.symmetric(vertical: 18),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            AppSpacing.borderRadius,
-                          ),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                    ),
+                    const SizedBox(height: AppSpacing.sectionGap),
+                    // Precautions
+                    if (test.precautions.isNotEmpty) ...[
+                      Row(
                         children: [
-                          Icon(IconsaxPlusLinear.add_square),
-                          SizedBox(width: 12),
+                          const Icon(IconsaxPlusLinear.shield_tick, color: AppColors.warning, size: 22),
+                          const SizedBox(width: 8),
                           Text(
-                            "Add to Inventory",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            "Precautions",
+                            style: AppTextStyles.cardTitle.copyWith(color: AppColors.warning),
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 20),
+                      const SizedBox(height: AppSpacing.elementGap),
+                      Container(
+                        padding: const EdgeInsets.all(AppSpacing.cardPadding),
+                        decoration: AppCardStyles.sleekCard.copyWith(
+                          color: AppColors.warning.withOpacity(0.05),
+                          border: Border.all(color: AppColors.warning.withOpacity(0.2)),
+                        ),
+                        child: Column(
+                          children: test.precautions.map((precaution) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Icon(
+                                    IconsaxPlusLinear.info_circle,
+                                    size: 20,
+                                    color: AppColors.warning,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      precaution,
+                                      style: AppTextStyles.description.copyWith(
+                                        color: AppColors.textPrimary,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sectionGap),
+                    ],
+                    // Spacer for scrolling
+                    const SizedBox(height: 80),
                   ],
+                ),
+              ),
+              // Pinned Bottom Button
+              Container(
+                padding: const EdgeInsets.only(
+                  left: AppSpacing.screenPadding,
+                  right: AppSpacing.screenPadding,
+                  top: AppSpacing.elementGap,
+                  bottom: 30, // Safety for home indicator
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, -4),
+                    ),
+                  ],
+                ),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      context.pop(); // Close bottom sheet
+                      context.push('/create-test', extra: test);
+                    },
+                    icon: const Icon(IconsaxPlusLinear.add_square, size: 24),
+                    label: const Text("Add to Inventory"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.textOnPrimary,
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          AppSpacing.borderRadius,
+                        ),
+                      ),
+                      elevation: 0,
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
         );
       },
+    );
+  }
+
+  Widget _buildBadge(String text, IconData icon, Color color, Color bgColor) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: color),
+          const SizedBox(width: 6),
+          Text(
+            text,
+            style: AppTextStyles.caption.copyWith(
+              color: color,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
+import 'package:lab_app/services/api_url.dart';
 import '../../models/core_lab_test.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/lab_test_provider.dart';
@@ -120,7 +121,54 @@ class _CreateLabTestScreenState extends ConsumerState<CreateLabTestScreen>
         subtitle: widget.test.testName,
         showBackButton: true,
       ),
-      body: _buildFormStep(),
+      body: Column(
+        children: [
+          Expanded(
+            child: _buildFormStep(),
+          ),
+          _buildActionBottom(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionBottom() {
+    return Container(
+      padding: const EdgeInsets.only(
+        left: AppSpacing.screenPadding,
+        right: AppSpacing.screenPadding,
+        top: AppSpacing.elementGap,
+        bottom: 30, // Safety for home indicator
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton.icon(
+          onPressed: _submit,
+          icon: const Icon(IconsaxPlusLinear.add_square, size: 24),
+          label: const Text("Add to Inventory"),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: AppColors.textOnPrimary,
+            padding: const EdgeInsets.symmetric(vertical: 18),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(
+                AppSpacing.borderRadius,
+              ),
+            ),
+            elevation: 0,
+          ),
+        ),
+      ),
     );
   }
 
@@ -181,27 +229,7 @@ class _CreateLabTestScreenState extends ConsumerState<CreateLabTestScreen>
             const SizedBox(height: AppSpacing.elementGap),
 
             _buildDiscountField(),
-            const SizedBox(height: AppSpacing.sectionGap),
-
-            // Action Buttons
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _submit,
-                icon: const Icon(IconsaxPlusLinear.add),
-                label: const Text("Add to Inventory"),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: AppColors.textOnPrimary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppSpacing.borderRadius),
-                  ),
-                  elevation: 0,
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.sectionGap * 2), // Extra space
           ],
         ),
       ),
@@ -215,22 +243,33 @@ class _CreateLabTestScreenState extends ConsumerState<CreateLabTestScreen>
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            width: 80,
+            height: 80,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppColors.primary, AppColors.primaryAccent],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+              borderRadius: BorderRadius.circular(20),
+              color: AppColors.primary.withOpacity(0.15),
+              border: Border.all(
+                color: AppColors.primary.withOpacity(0.3),
+                width: 1.5,
               ),
-              borderRadius: BorderRadius.circular(14),
+              image: widget.test.testPhotoUrl != null
+                  ? DecorationImage(
+                      image: NetworkImage(
+                        ApiUrl.imageUrl(widget.test.testPhotoUrl!),
+                      ),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
             ),
-            child: const Icon(
-              IconsaxPlusBold.document_text,
-              color: Colors.white,
-              size: 28,
-            ),
+            child: widget.test.testPhotoUrl == null
+                ? const Icon(
+                    IconsaxPlusLinear.monitor,
+                    size: 40,
+                    color: AppColors.primary,
+                  )
+                : null,
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: AppSpacing.cardPadding),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -238,24 +277,53 @@ class _CreateLabTestScreenState extends ConsumerState<CreateLabTestScreen>
                 Text(
                   widget.test.testName,
                   style: AppTextStyles.cardTitle,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 6),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withAlpha(20),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    widget.test.testCategory,
-                    style: AppTextStyles.caption.copyWith(
-                      color: AppColors.primaryAccent,
-                      fontWeight: FontWeight.w600,
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _buildBadge(
+                      widget.test.testCategory,
+                      IconsaxPlusLinear.category,
+                      AppColors.info,
+                      AppColors.info.withOpacity(0.15),
                     ),
-                  ),
+                    _buildBadge(
+                      widget.test.sampleType,
+                      IconsaxPlusLinear.drop,
+                      AppColors.error,
+                      AppColors.error.withOpacity(0.15),
+                    ),
+                  ],
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBadge(String text, IconData icon, Color color, Color bgColor) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: color),
+          const SizedBox(width: 6),
+          Text(
+            text,
+            style: AppTextStyles.caption.copyWith(
+              color: color,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],
