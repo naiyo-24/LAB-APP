@@ -45,6 +45,12 @@ class ApiUrl {
   static const String getAboutUsAll = "$aboutUs/get-all";
   static String getAboutUsById(int id) => "$aboutUs/get-by/$id";
 
+  // Test Package Bookings Endpoints
+  static const String testPackageBookings = "$baseUrl/test-package-bookings";
+  static String getOrdersByLab(String labId) => "$testPackageBookings/lab/$labId";
+  static String getOrderDetails(String bookingId) => "$testPackageBookings/details/$bookingId";
+  static String updateOrder(String bookingId) => "$testPackageBookings/update/$bookingId";
+
   // Helper for image URLs
   static String imageUrl(String path) => "$baseUrl/$path";
 }

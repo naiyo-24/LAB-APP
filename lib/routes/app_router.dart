@@ -19,6 +19,7 @@ import '../models/my_lab_test.dart';
 import '../screens/package/my_test_packages_screen.dart';
 import '../screens/package/create_package_screen.dart';
 import '../screens/about_us/about_us_screen.dart';
+import '../routes/order/order_management_screen.dart';
 
 class AppRouter {
   static final router = GoRouter(
@@ -75,10 +76,7 @@ class AppRouter {
       ),
       GoRoute(
         path: '/bookings',
-        builder: (context, state) => const PlaceholderScreen(
-          title: 'Test Bookings',
-          subtitle: 'Recent appointments',
-        ),
+        builder: (context, state) => const OrderManagementScreen(),
       ),
       GoRoute(
         path: '/earnings',

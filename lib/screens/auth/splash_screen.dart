@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import '../../theme/app_theme.dart';
@@ -27,7 +28,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     super.initState();
     _mainController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 2500),
     )..forward();
 
     _particleController = AnimationController(
@@ -156,11 +157,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset(
-                      'assets/logo/logo.png',
+                    SvgPicture.asset(
+                      'assets/logo/logo.svg',
                       width: 130,
                       height: 130,
-                      errorBuilder: (context, error, stackTrace) => Container(
+                      placeholderBuilder: (context) => Container(
                         width: 120,
                         height: 120,
                         decoration: const BoxDecoration(
@@ -174,8 +175,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         ),
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    const Text('MEDY24', style: AppTextStyles.header),
                     const SizedBox(height: 8),
                     const Text(
                       'Your Health, Our Priority',
