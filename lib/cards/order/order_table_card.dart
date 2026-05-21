@@ -220,11 +220,11 @@ class OrderTableCard extends ConsumerWidget {
             child: DataTable2(
               columnSpacing: 16,
               horizontalMargin: 20,
-              minWidth: 1100,
-              dataRowHeight: 70,
+              minWidth: 2800, // Increased to fit all columns
+              dataRowHeight: 80, // slightly taller for multiline
               headingRowHeight: 56,
               dividerThickness: 0,
-              headingRowColor: MaterialStateProperty.all(Colors.grey.shade50),
+              headingRowColor: WidgetStateProperty.all(Colors.grey.shade50),
               columns: [
                 DataColumn2(
                   label: Text(
@@ -250,6 +250,28 @@ class OrderTableCard extends ConsumerWidget {
                 ),
                 DataColumn2(
                   label: Text(
+                    'TYPE',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  size: ColumnSize.S,
+                ),
+                DataColumn2(
+                  label: Text(
+                    'TESTS',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  size: ColumnSize.L,
+                ),
+                DataColumn2(
+                  label: Text(
                     'PATIENT',
                     style: TextStyle(
                       fontSize: 12,
@@ -261,7 +283,7 @@ class OrderTableCard extends ConsumerWidget {
                 ),
                 DataColumn2(
                   label: Text(
-                    'TEST',
+                    'ADDRESS',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -272,7 +294,7 @@ class OrderTableCard extends ConsumerWidget {
                 ),
                 DataColumn2(
                   label: Text(
-                    'AMOUNT',
+                    'SUB TOTAL',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -280,6 +302,72 @@ class OrderTableCard extends ConsumerWidget {
                     ),
                   ),
                   size: ColumnSize.S,
+                ),
+                DataColumn2(
+                  label: Text(
+                    'PLATFORM FEE',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  size: ColumnSize.S,
+                ),
+                DataColumn2(
+                  label: Text(
+                    'TAX',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  size: ColumnSize.S,
+                ),
+                DataColumn2(
+                  label: Text(
+                    'TOTAL',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  size: ColumnSize.S,
+                ),
+                DataColumn2(
+                  label: Text(
+                    'PAY MODE',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  size: ColumnSize.S,
+                ),
+                DataColumn2(
+                  label: Text(
+                    'NOTE',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  size: ColumnSize.M,
+                ),
+                DataColumn2(
+                  label: Text(
+                    'CANCEL REASON',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  size: ColumnSize.M,
                 ),
                 DataColumn2(
                   label: Text(
@@ -308,25 +396,39 @@ class OrderTableCard extends ConsumerWidget {
                 final index = entry.key;
                 final order = entry.value;
 
-                // Extract patient name
+                // Extract patient info
                 String patientName = 'N/A';
+                String patientPhone = '';
                 if (order.patientDetails.isNotEmpty) {
                   patientName =
                       order.patientDetails.first['full_name']?.toString() ??
                       'N/A';
+                  patientPhone =
+                      order.patientDetails.first['phone_number']?.toString() ??
+                      '';
                 }
 
-                // Extract test name
-                String testName = 'N/A';
-                if (order.bookedItems.isNotEmpty) {
-                  testName =
-                      order.bookedItems.first['item_name']?.toString() ?? 'N/A';
+                // Extract test names
+                String tests = order.bookedItems
+                    .map((item) => item['item_name']?.toString() ?? '')
+                    .where((name) => name.isNotEmpty)
+                    .join(', ');
+                if (tests.isEmpty) tests = 'N/A';
+
+                // Extract address
+                String addressStr = 'N/A';
+                if (order.sampleCollectionAddress.isNotEmpty) {
+                  final addrParts = [
+                    order.sampleCollectionAddress['address_1']?.toString(),
+                    order.sampleCollectionAddress['street_address']?.toString(),
+                  ].where((s) => s != null && s.isNotEmpty).toList();
+                  if (addrParts.isNotEmpty) addressStr = addrParts.join(', ');
                 }
 
                 final statusColor = _getStatusColor(order.bookingStatus);
 
                 return DataRow2(
-                  color: MaterialStateProperty.all(
+                  color: WidgetStateProperty.all(
                     index.isEven
                         ? Colors.white
                         : Colors.grey.shade50.withOpacity(0.5),
@@ -375,6 +477,29 @@ class OrderTableCard extends ConsumerWidget {
                         ),
                       ),
                     ),
+                    // Booking Type
+                    DataCell(
+                      Text(
+                        order.bookingType.replaceAll('_', ' ').toUpperCase(),
+                        style: TextStyle(
+                          color: Colors.grey.shade800,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    // Tests
+                    DataCell(
+                      Text(
+                        tests,
+                        style: TextStyle(
+                          color: Colors.grey.shade800,
+                          fontSize: 13,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                     // Patient
                     DataCell(
                       Column(
@@ -390,11 +515,9 @@ class OrderTableCard extends ConsumerWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          if (order.patientDetails.isNotEmpty &&
-                              order.patientDetails.first['phone_number'] !=
-                                  null)
+                          if (patientPhone.isNotEmpty)
                             Text(
-                              order.patientDetails.first['phone_number'],
+                              patientPhone,
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey.shade500,
@@ -403,16 +526,49 @@ class OrderTableCard extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    // Test
+                    // Address
                     DataCell(
                       Text(
-                        testName,
-                        style: TextStyle(color: Colors.grey.shade800),
+                        addressStr,
+                        style: TextStyle(
+                          color: Colors.grey.shade800,
+                          fontSize: 13,
+                        ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    // Amount
+                    // Sub Total Amount
+                    DataCell(
+                      Text(
+                        '₹${order.subTotalAmount}',
+                        style: TextStyle(
+                          color: Colors.grey.shade800,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                    // Platform Fee
+                    DataCell(
+                      Text(
+                        '₹${order.platformFee}',
+                        style: TextStyle(
+                          color: Colors.grey.shade800,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                    // Tax Amount
+                    DataCell(
+                      Text(
+                        '₹${order.taxAmount}',
+                        style: TextStyle(
+                          color: Colors.grey.shade800,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                    // Total Amount
                     DataCell(
                       Text(
                         '₹${order.totalAmountToBePaid}',
@@ -420,6 +576,49 @@ class OrderTableCard extends ConsumerWidget {
                           fontWeight: FontWeight.w600,
                           color: AppColors.primary,
                         ),
+                      ),
+                    ),
+                    // Payment Mode
+                    DataCell(
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: Text(
+                          order.paymentMode.toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Customer Note
+                    DataCell(
+                      Text(
+                        order.customerNote ?? '-',
+                        style: TextStyle(
+                          color: Colors.grey.shade800,
+                          fontSize: 13,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    // Cancellation Reason
+                    DataCell(
+                      Text(
+                        order.cancellationReason ?? '-',
+                        style: TextStyle(color: AppColors.error, fontSize: 13),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     // Status
