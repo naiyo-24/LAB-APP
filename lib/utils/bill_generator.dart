@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -7,10 +6,6 @@ import '../models/order.dart';
 class BillGenerator {
   static Future<void> generateAndPrintBill(Order order) async {
     final pdf = pw.Document();
-
-    // Load SVG logo
-    final String svgRaw = await rootBundle.loadString('assets/logo/logo.svg');
-    final logoImage = pw.SvgImage(svg: svgRaw);
 
     // Prepare patient info
     String patientName = 'N/A';
@@ -50,8 +45,6 @@ class BillGenerator {
                     pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
-                        pw.Container(width: 80, height: 80, child: logoImage),
-                        pw.SizedBox(height: 8),
                         pw.Text(
                           order.labName ?? 'Lab Name',
                           style: pw.TextStyle(
