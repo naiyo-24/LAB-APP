@@ -7,6 +7,7 @@ import 'package:iconsax_plus/iconsax_plus.dart';
 import '../../models/order.dart';
 import '../../providers/order_provider.dart';
 import '../../theme/app_theme.dart';
+import '../../utils/bill_generator.dart';
 import 'cancellation_bottomsheet.dart';
 
 class OrderTableCard extends ConsumerWidget {
@@ -91,23 +92,26 @@ class OrderTableCard extends ConsumerWidget {
     }
   }
 
-  void _downloadReport(BuildContext context, Order order) {
-    if (order.reportUrls == null || order.reportUrls!.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No reports available for this order.')),
-      );
-      return;
-    }
-    // As url_launcher is not installed, we display a placeholder message.
+  void _downloadReport(BuildContext context, Order order) async {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          'Downloading report: ${order.reportUrls!.first.split('/').last}',
-        ),
+        content: Text('Generating bill for ${order.bookingId}...'),
         backgroundColor: AppColors.primary,
         behavior: SnackBarBehavior.floating,
       ),
     );
+    try {
+      await BillGenerator.generateAndPrintBill(order);
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error generating bill: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
   }
 
   // Helper method for getting status color
@@ -169,53 +173,6 @@ class OrderTableCard extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Recent Bookings',
-                      style: AppTextStyles.cardTitle.copyWith(
-                        fontSize: 18,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Manage and track all patient orders',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey.shade500,
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    '${orders.length} Total',
-                    style: const TextStyle(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1, thickness: 1, color: Color(0xFFF0F0F0)),
           Expanded(
             child: DataTable2(
               columnSpacing: 16,
@@ -456,7 +413,7 @@ class OrderTableCard extends ConsumerWidget {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              '#${order.bookingId.length > 8 ? order.bookingId.substring(order.bookingId.length - 8) : order.bookingId}',
+                              order.bookingId,
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.textPrimary,
@@ -470,7 +427,7 @@ class OrderTableCard extends ConsumerWidget {
                     // Date
                     DataCell(
                       Text(
-                        order.createdAt.toLocal().toString().split(' ')[0],
+                        order.createdAt.toLocal().toString().split('.')[0],
                         style: TextStyle(
                           color: Colors.grey.shade700,
                           fontSize: 13,
@@ -724,31 +681,19 @@ class OrderTableCard extends ConsumerWidget {
                           ),
                           const SizedBox(width: 8),
                           Tooltip(
-                            message:
-                                (order.reportUrls == null ||
-                                    order.reportUrls!.isEmpty)
-                                ? 'No report to download'
-                                : 'Download Report',
+                            message: 'Download Bill',
                             child: InkWell(
                               onTap: () => _downloadReport(context, order),
                               borderRadius: BorderRadius.circular(8),
                               child: Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color:
-                                      (order.reportUrls == null ||
-                                          order.reportUrls!.isEmpty)
-                                      ? Colors.grey.withOpacity(0.1)
-                                      : Colors.green.withOpacity(0.1),
+                                  color: Colors.green.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: Icon(
+                                child: const Icon(
                                   IconsaxPlusLinear.document_download,
-                                  color:
-                                      (order.reportUrls == null ||
-                                          order.reportUrls!.isEmpty)
-                                      ? Colors.grey
-                                      : Colors.green,
+                                  color: Colors.green,
                                   size: 18,
                                 ),
                               ),
