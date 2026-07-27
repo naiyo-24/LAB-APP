@@ -94,30 +94,33 @@ class ProfileOptionsCard extends StatelessWidget {
   }
 
   Widget _buildOptionTile(BuildContext context, _OptionData option) {
-    return ListTile(
-      onTap: () => context.push(option.route),
-      leading: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: option.color.withAlpha(20),
-          borderRadius: BorderRadius.circular(14),
+    return Material(
+      color: Colors.transparent,
+      child: ListTile(
+        onTap: () => context.push(option.route),
+        leading: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: option.color.withAlpha(20),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Icon(option.icon, color: option.color, size: 22),
         ),
-        child: Icon(option.icon, color: option.color, size: 22),
+        title: Text(
+          option.title,
+          style: AppTextStyles.cardTitle.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(
+          option.subtitle,
+          style: AppTextStyles.caption.copyWith(fontSize: 13),
+        ),
+        trailing: Icon(
+          IconsaxPlusLinear.arrow_right_3,
+          size: 16,
+          color: AppColors.textSecondary.withAlpha(100),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       ),
-      title: Text(
-        option.title,
-        style: AppTextStyles.cardTitle.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
-      ),
-      subtitle: Text(
-        option.subtitle,
-        style: AppTextStyles.caption.copyWith(fontSize: 13),
-      ),
-      trailing: Icon(
-        IconsaxPlusLinear.arrow_right_3,
-        size: 16,
-        color: AppColors.textSecondary.withAlpha(100),
-      ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     );
   }
 }

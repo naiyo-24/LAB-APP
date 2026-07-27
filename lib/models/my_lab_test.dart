@@ -26,33 +26,47 @@ class MyLabTest {
   });
 
   factory MyLabTest.fromJson(Map<String, dynamic> json) {
+    // Handling both old backend names and new backend names (including flat GraphQL structure)
+    final double sellingPrice = (json['customer_selling_price'] ?? json['final_price'] ?? json['price'] ?? 0.0).toDouble();
+    final double marketPriceVal = (json['mrp'] ?? json['market_price'] ?? json['price'] ?? 0.0).toDouble();
+    
+    // Calculate discount if not provided
+    double discount = (json['discount_percent'] ?? json['discount_percentage'] ?? 0.0).toDouble();
+    if (discount == 0.0 && marketPriceVal > 0 && sellingPrice < marketPriceVal) {
+      discount = ((marketPriceVal - sellingPrice) / marketPriceVal) * 100;
+    }
+
+    CoreLabTest? details;
+    if (json['core_test_details'] != null) {
+      details = CoreLabTest.fromJson(json['core_test_details']);
+    } else if (json['test_name'] != null) {
+      // If it's a flat GraphQL response, construct CoreLabTest manually
+      details = CoreLabTest.fromJson(json);
+    }
+
     return MyLabTest(
-      testId: json['test_id'] ?? '',
+      testId: json['id'] ?? json['test_id'] ?? '',
       labId: json['lab_id'] ?? '',
-      coreTestId: json['core_test_id'] ?? '',
-      sampleCollectionTime: json['sample_collection_time'] ?? '',
-      reportDeliveryTime: json['report_delivery_time'] ?? '',
-      price: (json['price'] ?? 0.0).toDouble(),
-      discountPercent: (json['discount_percent'] ?? 0.0).toDouble(),
-      marketPrice: (json['market_price'] ?? 0.0).toDouble(),
+      coreTestId: json['test_id'] ?? json['core_test_id'] ?? '',
+      sampleCollectionTime: json['sample_collection_time'] ?? (json['home_collection_available'] == true ? 'Home Collection Available' : ''),
+      reportDeliveryTime: json['report_delivery_time'] ?? '${json['turnaround_time_hours'] ?? 24} hours',
+      price: sellingPrice,
+      discountPercent: discount,
+      marketPrice: marketPriceVal,
       reviews: List<dynamic>.from(json['reviews'] ?? []),
-      coreTestDetails: json['core_test_details'] != null
-          ? CoreLabTest.fromJson(json['core_test_details'])
-          : null,
+      coreTestDetails: details,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'test_id': testId,
-      'lab_id': labId,
-      'core_test_id': coreTestId,
-      'sample_collection_time': sampleCollectionTime,
-      'report_delivery_time': reportDeliveryTime,
-      'price': price,
-      'discount_percent': discountPercent,
-      'market_price': marketPrice,
-      'reviews': reviews,
+      'test_id': coreTestId, // The new backend uses test_id to link to the global test catalog
+      'lab_base_rate': price * 0.8, // Approximation if not stored
+      'customer_selling_price': price,
+      'mrp': marketPrice,
+      'turnaround_time_hours': 24, // Approximation
+      'home_collection_available': true,
+      'walk_in_available': true,
     };
   }
 }

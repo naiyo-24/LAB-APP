@@ -237,9 +237,11 @@ class _CreatePackageScreenState extends ConsumerState<CreatePackageScreen> {
                             itemBuilder: (context, index) {
                               final test = tests[index];
                               final isSelected = _selectedTests.contains(test);
-                              return ListTile(
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                                title: Text(
+                              return Material(
+                                color: Colors.transparent,
+                                child: ListTile(
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                  title: Text(
                                   test.coreTestDetails?.testName ?? "",
                                   style: AppTextStyles.description.copyWith(fontWeight: FontWeight.w600),
                                 ),
@@ -275,11 +277,12 @@ class _CreatePackageScreenState extends ConsumerState<CreatePackageScreen> {
                                     }
                                   });
                                 },
-                              );
-                            },
-                          );
-                        },
-                        loading: () =>
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      loading: () =>
                             const Center(child: CircularProgressIndicator()),
                         error: (err, stack) => Center(child: Text("Error: $err")),
                       ),

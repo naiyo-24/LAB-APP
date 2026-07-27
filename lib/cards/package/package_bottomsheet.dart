@@ -444,9 +444,11 @@ class _PackageBottomSheetState extends ConsumerState<PackageBottomSheet> {
                             (t) => t['test_id'] == test.testId,
                           );
 
-                          return ListTile(
-                            title: Text(
-                              test.coreTestDetails?.testName ?? "Test",
+                          return Material(
+                            color: Colors.transparent,
+                            child: ListTile(
+                              title: Text(
+                                test.coreTestDetails?.testName ?? "Test",
                             ),
                             subtitle: Text(
                               test.coreTestDetails?.testCategory ?? "",
@@ -492,6 +494,7 @@ class _PackageBottomSheetState extends ConsumerState<PackageBottomSheet> {
                                     });
                                     Navigator.pop(context);
                                   },
+                            ),
                           );
                         },
                       );

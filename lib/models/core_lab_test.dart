@@ -21,27 +21,24 @@ class CoreLabTest {
 
   factory CoreLabTest.fromJson(Map<String, dynamic> json) {
     return CoreLabTest(
-      coreTestId: json['core_test_id'] ?? '',
+      coreTestId: json['test_id'] ?? json['core_test_id'] ?? '',
       testName: json['test_name'] ?? '',
-      testCategory: json['test_category'] ?? '',
+      testCategory: json['category'] ?? json['test_category'] ?? '',
       sampleType: json['sample_type'] ?? '',
       description: json['description'],
-      parameters: List<String>.from(json['parameters'] ?? []),
-      precautions: List<String>.from(json['precautions'] ?? []),
+      parameters: [], // Deprecated in new backend, has number_of_parameters
+      precautions: json['pre_test_info'] != null ? [json['pre_test_info']] : [],
       testPhotoUrl: json['test_photo_url'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'core_test_id': coreTestId,
+      'test_id': coreTestId,
       'test_name': testName,
-      'test_category': testCategory,
+      'category': testCategory,
       'sample_type': sampleType,
       'description': description,
-      'parameters': parameters,
-      'precautions': precautions,
-      'test_photo_url': testPhotoUrl,
     };
   }
 }

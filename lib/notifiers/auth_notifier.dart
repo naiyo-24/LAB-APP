@@ -31,16 +31,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final savedId = await _authServices.getSavedLabId();
       if (savedId != null) {
         final response = await _authServices.getProfile(savedId);
-        if (response.statusCode == 200) {
-          state = state.copyWith(
-            isLoading: false,
-            user: User.fromJson(response.data),
-          );
-          return;
-        } else {
-          // If profile fetch fails, clear invalid session
-          await _authServices.clearSession();
-        }
+        final user = User.fromJson(response.data);
+        state = state.copyWith(user: user);
       }
     } catch (e) {
       // Log error if needed
@@ -49,19 +41,22 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  Future<void> login(String email, String password) async {
+  Future<void> login(String phone, String password) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final response = await _authServices.login(email, password);
+      final response = await _authServices.login(phone, password);
       if (response.statusCode == 200) {
-        final userData = response.data['user'];
-        final user = User.fromJson(userData);
+        final accessToken = response.data['access_token'];
+        final userId = response.data['user_id'];
         
-        // Save session
-        if (user.id != null) {
-          await _authServices.saveLabId(user.id!);
+        // Save session with JWT token
+        if (userId != null && accessToken != null) {
+          await _authServices.saveLabIdAndToken(userId, accessToken);
         }
         
+        // Since the new backend doesn't return full user details on login,
+        // we might create a dummy user or fetch profile later.
+        final user = User(id: userId, labName: "Lab User", mobileNumber: phone);
         state = state.copyWith(isLoading: false, user: user);
       } else {
         state = state.copyWith(
@@ -108,11 +103,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
 
       if (response.statusCode == 200) {
-        final user = User.fromJson({...fields, 'lab_id': response.data['lab_id']});
+        final labId = response.data['lab_id'];
+        final user = User.fromJson({...fields, 'lab_id': labId});
         
         // Save session
+        // Note: New backend might not return a token during registration, or returns it differently.
+        // Assuming we just save the lab ID for now, or redirect to login.
+        // Let's create a temporary token or require login afterwards.
         if (user.id != null) {
-          await _authServices.saveLabId(user.id!);
+          await _authServices.saveLabIdAndToken(user.id!, ""); 
         }
         
         state = state.copyWith(isLoading: false, user: user);

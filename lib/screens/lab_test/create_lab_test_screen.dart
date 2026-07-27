@@ -75,17 +75,22 @@ class _CreateLabTestScreenState extends ConsumerState<CreateLabTestScreen>
       return;
     }
 
+    final price = double.parse(_priceController.text);
+    final discount = double.tryParse(_discountController.text) ?? 0.0;
+    final sellingPrice = price - (price * discount / 100);
+
     final data = {
-      'lab_id': labId,
-      'core_test_id': widget.test.coreTestId,
-      'sample_collection_time': _selectedSampleTime,
-      'report_delivery_time': _selectedReportTime,
-      'price': double.parse(_priceController.text),
-      'discount_percent': double.tryParse(_discountController.text) ?? 0.0,
-      'reviews': [],
+      'test_id': widget.test.coreTestId,
+      'price': price,
+      'discount_percentage': discount,
+      'final_price': sellingPrice,
+      'lab_base_rate': sellingPrice * 0.8, 
+      'turnaround_time_hours': 24, 
+      'home_collection_available': true,
+      'walk_in_available': true,
     };
 
-    await ref.read(myLabTestProvider.notifier).addToInventory(data);
+    await ref.read(myLabTestProvider.notifier).addToInventory(labId, data);
 
     if (mounted) {
       final state = ref.read(myLabTestProvider);

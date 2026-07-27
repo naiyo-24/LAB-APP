@@ -9,6 +9,7 @@ import '../../widgets/app_bar.dart';
 import '../../widgets/side_nav_bar.dart';
 import '../../cards/package/package_card.dart';
 import '../../cards/package/package_bottomsheet.dart';
+import '../../widgets/main_screen_pop_scope.dart';
 
 class MyTestPackagesScreen extends ConsumerStatefulWidget {
   const MyTestPackagesScreen({super.key});
@@ -43,8 +44,9 @@ class _MyTestPackagesScreenState extends ConsumerState<MyTestPackagesScreen> {
     final packagesAsync = ref.watch(packageProvider);
     final user = ref.watch(authProvider).user;
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
+    return MainScreenPopScope(
+      child: Scaffold(
+        backgroundColor: AppColors.background,
       appBar: _isSearching
           ? _buildSearchAppBar()
           : CustomAppBar(
@@ -118,7 +120,7 @@ class _MyTestPackagesScreenState extends ConsumerState<MyTestPackagesScreen> {
           error: (err, stack) => Center(child: Text("Error: $err")),
         ),
       ),
-    );
+    ));
   }
 
   PreferredSizeWidget _buildSearchAppBar() {

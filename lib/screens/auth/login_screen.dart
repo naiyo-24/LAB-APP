@@ -17,20 +17,20 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final PageController _pageController = PageController();
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   int _currentPage = 0;
 
   void _nextPage() {
     if (_currentPage == 0) {
-      if (_emailController.text.isNotEmpty) {
+      if (_phoneController.text.isNotEmpty) {
         _pageController.nextPage(
           duration: const Duration(milliseconds: 600),
           curve: Curves.fastOutSlowIn,
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please enter your email')),
+          const SnackBar(content: Text('Please enter your phone number')),
         );
       }
     } else {
@@ -48,7 +48,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     await ref
         .read(authProvider.notifier)
-        .login(_emailController.text, _passwordController.text);
+        .login(_phoneController.text, _passwordController.text);
 
     final authState = ref.read(authProvider);
     if (authState.user != null) {
@@ -126,7 +126,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Widget _buildEmailSlide() {
     final authState = ref.watch(authProvider);
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,19 +159,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ),
           const SizedBox(height: 18),
           const Text(
-            'REGISTERED EMAIL',
+            'REGISTERED PHONE NUMBER',
             style: AppTextStyles.tagline,
           ),
           const SizedBox(height: 12),
           TextField(
-            controller: _emailController,
-            keyboardType: TextInputType.emailAddress,
+            controller: _phoneController,
+            keyboardType: TextInputType.phone,
             style: AppTextStyles.description.copyWith(fontWeight: FontWeight.w600),
             decoration: InputDecoration(
-              hintText: 'name@lab.com',
+              hintText: 'e.g. 9876543210',
               hintStyle: AppTextStyles.description.copyWith(color: AppColors.textTertiary),
               prefixIcon: const Icon(
-                IconsaxPlusLinear.sms,
+                IconsaxPlusLinear.call,
                 color: AppColors.primary,
                 size: 22,
               ),
@@ -235,7 +235,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Widget _buildPasswordSlide() {
     final authState = ref.watch(authProvider);
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

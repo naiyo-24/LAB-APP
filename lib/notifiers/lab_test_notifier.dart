@@ -80,11 +80,11 @@ class MyLabTestNotifier extends AsyncNotifier<List<MyLabTest>> {
     });
   }
 
-  Future<void> addToInventory(Map<String, dynamic> data) async {
+  Future<void> addToInventory(String labId, Map<String, dynamic> data) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      final newTest = await _services.createInventory(data);
-      _myTests.add(newTest);
+      await _services.createInventory(labId, data);
+      _myTests = await _services.getInventoryByLab(labId);
       return [..._myTests];
     });
   }
@@ -93,9 +93,8 @@ class MyLabTestNotifier extends AsyncNotifier<List<MyLabTest>> {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await _services.updateInventory(testId, data);
-      final updatedTest = await _services.getInventoryById(testId);
-      _myTests =
-          _myTests.map((t) => t.testId == testId ? updatedTest : t).toList();
+      final labId = _myTests.firstWhere((t) => t.testId == testId).labId;
+      _myTests = await _services.getInventoryByLab(labId);
       return [..._myTests];
     });
   }
@@ -103,7 +102,8 @@ class MyLabTestNotifier extends AsyncNotifier<List<MyLabTest>> {
   Future<void> deleteFromInventory(String testId) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      await _services.deleteInventory([testId]);
+      final labId = _myTests.firstWhere((t) => t.testId == testId).labId;
+      await _services.deleteInventory(labId, [testId]);
       _myTests.removeWhere((t) => t.testId == testId);
       return [..._myTests];
     });

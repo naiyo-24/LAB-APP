@@ -55,13 +55,20 @@ class _LabTestDetailsScreenState extends ConsumerState<LabTestDetailsScreen> {
   }
 
   Future<void> _handleSave() async {
+    final price = double.tryParse(_priceController.text) ?? widget.test.marketPrice;
+    final discount = double.tryParse(_discountController.text) ?? widget.test.discountPercent;
+    final finalPrice = price - (price * discount / 100);
+
     final data = {
-      'sample_collection_time': _selectedSampleTime,
-      'report_delivery_time': _selectedReportTime,
-      'price': double.tryParse(_priceController.text) ?? widget.test.price,
-      'discount_percent':
-          double.tryParse(_discountController.text) ??
-          widget.test.discountPercent,
+      'test_id': widget.test.coreTestId,
+      'lab_id': widget.test.labId,
+      'price': price,
+      'discount_percentage': discount,
+      'final_price': finalPrice,
+      'lab_base_rate': finalPrice * 0.8,
+      'turnaround_time_hours': 24,
+      'home_collection_available': true,
+      'walk_in_available': true,
     };
 
     await ref

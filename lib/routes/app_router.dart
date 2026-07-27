@@ -20,6 +20,7 @@ import '../screens/package/my_test_packages_screen.dart';
 import '../screens/package/create_package_screen.dart';
 import '../screens/about_us/about_us_screen.dart';
 import '../routes/order/order_management_screen.dart';
+import '../widgets/main_screen_pop_scope.dart';
 
 class AppRouter {
   static final router = GoRouter(
@@ -115,7 +116,7 @@ class PlaceholderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final scaffold = Scaffold(
       appBar: CustomAppBar(
         title: title,
         subtitle: subtitle,
@@ -133,5 +134,10 @@ class PlaceholderScreen extends StatelessWidget {
       drawer: const SideNavBar(),
       body: Center(child: Text('$title Screen')),
     );
+
+    if (title == 'Dashboard') {
+      return scaffold;
+    }
+    return MainScreenPopScope(child: scaffold);
   }
 }

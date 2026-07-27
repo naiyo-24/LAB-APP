@@ -7,6 +7,7 @@ import '../../widgets/side_nav_bar.dart';
 import '../../providers/order_provider.dart';
 import '../../cards/order/order_table_card.dart';
 import '../../cards/order/order_search_filter_card.dart';
+import '../../widgets/main_screen_pop_scope.dart';
 
 class OrderManagementScreen extends ConsumerStatefulWidget {
   const OrderManagementScreen({super.key});
@@ -49,8 +50,9 @@ class _OrderManagementScreenState extends ConsumerState<OrderManagementScreen> {
       return true;
     }).toList();
 
-    return Scaffold(
-      appBar: CustomAppBar(
+    return MainScreenPopScope(
+      child: Scaffold(
+        appBar: CustomAppBar(
         title: 'Orders & Bookings',
         subtitle: 'Manage your patient bookings',
         showDrawer: true,
@@ -100,6 +102,6 @@ class _OrderManagementScreenState extends ConsumerState<OrderManagementScreen> {
           ),
         ],
       ),
-    );
+    ));
   }
 }

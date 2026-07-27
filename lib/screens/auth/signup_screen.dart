@@ -489,9 +489,11 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
         border: Border.all(color: AppColors.divider),
       ),
-      child: CheckboxListTile(
-        value: value,
-        onChanged: onChanged,
+      child: Material(
+        color: Colors.transparent,
+        child: CheckboxListTile(
+          value: value,
+          onChanged: onChanged,
         title: Text(
           title,
           style: AppTextStyles.cardTitle.copyWith(fontSize: 16),
@@ -502,6 +504,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
+        ),
         ),
       ),
     );

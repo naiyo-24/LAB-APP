@@ -8,6 +8,8 @@ import '../../widgets/app_bar.dart';
 import '../../cards/lab_test/core_lab_test_card.dart';
 import '../../theme/app_theme.dart';
 
+import '../../widgets/main_screen_pop_scope.dart';
+
 class CoreLabTestListScreen extends ConsumerStatefulWidget {
   const CoreLabTestListScreen({super.key});
 
@@ -17,7 +19,16 @@ class CoreLabTestListScreen extends ConsumerStatefulWidget {
 }
 
 class _CoreLabTestListScreenState extends ConsumerState<CoreLabTestListScreen> {
+  bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(coreLabTestProvider.notifier).refreshTests();
+    });
+  }
 
   @override
   void dispose() {
@@ -29,14 +40,15 @@ class _CoreLabTestListScreenState extends ConsumerState<CoreLabTestListScreen> {
   Widget build(BuildContext context) {
     final testsAsync = ref.watch(coreLabTestProvider);
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: CustomAppBar(
-        showBackButton: false,
-        showDrawer: true,
-        title: "Available Tests",
-        subtitle: "Add Tests to Your Inventory",
-        actions: [
+    return MainScreenPopScope(
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: CustomAppBar(
+          showBackButton: false,
+          showDrawer: true,
+          title: "Available Tests",
+          subtitle: "Add Tests to Your Inventory",
+          actions: [
           IconButton(
             onPressed: () {
               context.push('/search-core-tests');
@@ -68,6 +80,6 @@ class _CoreLabTestListScreenState extends ConsumerState<CoreLabTestListScreen> {
           error: (err, stack) => Center(child: Text("Error: $err")),
         ),
       ),
-    );
+    ));
   }
 }

@@ -33,7 +33,7 @@ class User {
     return User(
       id: json['lab_id'] ?? json['id'],
       labName: json['lab_name'],
-      mobileNumber: json['mobile_number'],
+      mobileNumber: json['mobile_number'] ?? json['phone'],
       email: json['email_address'] ?? json['email'],
       panNumber: json['pan_number'],
       nablNumber: json['nabl_accreditation_number'],
@@ -41,7 +41,7 @@ class User {
       gstNumber: json['gst_number'],
       emergencyContact: json['emergency_contact_number'],
       whatsappNumber: json['whatsapp_number'],
-      labLogo: json['lab_logo_url'] ?? json['lab_logo'],
+      labLogo: json['lab_logo_url'] ?? json['lab_logo'] ?? json['lab_image'],
       registrationCertificate: json['registration_certificate_url'] ?? json['registration_certificate'],
       bankPassbook: json['bank_passbook_url'] ?? json['bank_passbook'],
     );

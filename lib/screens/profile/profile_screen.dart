@@ -8,6 +8,7 @@ import '../../cards/profile/profile_header_card.dart';
 import '../../cards/profile/profile_options_card.dart';
 
 import '../../providers/profile_provider.dart';
+import '../../widgets/main_screen_pop_scope.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -34,8 +35,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final profileState = ref.watch(profileProvider);
     final user = authState.user;
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
+    return MainScreenPopScope(
+      child: Scaffold(
+        backgroundColor: AppColors.background,
       appBar: const CustomAppBar(
         title: 'My Profile',
         subtitle: 'LABORATORY ACCOUNT',
@@ -87,6 +89,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                   ),
                 ),
+      ),
     );
   }
 }

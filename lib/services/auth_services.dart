@@ -7,6 +7,7 @@ import 'api_url.dart';
 class AuthServices {
   final Dio _dio = Dio();
   static const String _labIdKey = 'logged_in_lab_id';
+  static const String _tokenKey = 'jwt_access_token';
 
   AuthServices() {
     _dio.interceptors.add(
@@ -20,6 +21,17 @@ class AuthServices {
         maxWidth: 90,
       ),
     );
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          final token = await getSavedToken();
+          if (token != null && token.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          return handler.next(options);
+        },
+      ),
+    );
   }
 
   SharedPreferences? _prefs;
@@ -30,10 +42,11 @@ class AuthServices {
   }
 
   // Session Management
-  Future<void> saveLabId(String labId) async {
+  Future<void> saveLabIdAndToken(String labId, String token) async {
     debugPrint('Saving session for labId: $labId');
     final prefs = await _getPrefs;
     await prefs.setString(_labIdKey, labId);
+    await prefs.setString(_tokenKey, token);
   }
 
   Future<String?> getSavedLabId() async {
@@ -42,11 +55,17 @@ class AuthServices {
     debugPrint('Retrieved saved labId: $id');
     return id;
   }
+  
+  Future<String?> getSavedToken() async {
+    final prefs = await _getPrefs;
+    return prefs.getString(_tokenKey);
+  }
 
   Future<void> clearSession() async {
     debugPrint('Clearing session');
     final prefs = await _getPrefs;
     await prefs.remove(_labIdKey);
+    await prefs.remove(_tokenKey);
   }
 
   Future<Response> signup(
@@ -74,39 +93,51 @@ class AuthServices {
     return await _dio.post(ApiUrl.signup, data: formData);
   }
 
-  // Improved signup that takes explicit files
+  // Improved signup that maps the Flutter form to the new backend AdminCreateLabRequest schema
   Future<Response> signupMultipart({
     required Map<String, dynamic> fields,
     String? labLogoPath,
     required String regCertPath,
     required String bankPassbookPath,
   }) async {
-    FormData formData = FormData.fromMap(fields);
+    final formData = FormData.fromMap({
+      'phone': fields['mobile_number'] ?? '',
+      'owner_name': fields['lab_name'] ?? 'Owner',
+      'lab_name': fields['lab_name'] ?? '',
+      'address': fields['address'] ?? '',
+      'latitude': 0.0,
+      'longitude': 0.0,
+      'license_number': fields['nabl_accreditation_number'] ?? 'N/A',
+      'password': fields['password'] ?? '',
+      
+      'gst_number': fields['gst_number'] ?? '',
+      'pan_number': fields['pan_number'] ?? 'N/A',
+      'nabl_accreditation_number': fields['nabl_accreditation_number'] ?? 'N/A',
+      'emergency_contact_number': fields['emergency_contact_number'] ?? '',
+      'whatsapp_number': fields['whatsapp_number'] ?? '',
+      
+      'registration_certificate': await MultipartFile.fromFile(regCertPath),
+      'bank_passbook': await MultipartFile.fromFile(bankPassbookPath),
+    });
 
-    if (labLogoPath != null) {
-      formData.files.add(
-        MapEntry('lab_logo', await MultipartFile.fromFile(labLogoPath)),
-      );
+    if (labLogoPath != null && labLogoPath.isNotEmpty) {
+      formData.files.add(MapEntry(
+        'lab_image',
+        await MultipartFile.fromFile(labLogoPath),
+      ));
     }
-    formData.files.add(
-      MapEntry(
-        'registration_certificate',
-        await MultipartFile.fromFile(regCertPath),
-      ),
-    );
-    formData.files.add(
-      MapEntry('bank_passbook', await MultipartFile.fromFile(bankPassbookPath)),
-    );
 
     return await _dio.post(ApiUrl.signup, data: formData);
   }
 
-  Future<Response> login(String email, String password) async {
-    FormData formData = FormData.fromMap({
-      'email': email,
-      'password': password,
-    });
-    return await _dio.post(ApiUrl.login, data: formData);
+  Future<Response> login(String phone, String password) async {
+    return await _dio.post(
+      ApiUrl.login,
+      data: {
+        'phone': phone,
+        'password': password,
+      },
+    );
   }
 
   Future<Response> getProfile(String labId) async {
@@ -124,7 +155,7 @@ class AuthServices {
 
     if (labLogoPath != null) {
       formData.files.add(
-        MapEntry('lab_logo', await MultipartFile.fromFile(labLogoPath)),
+        MapEntry('lab_image', await MultipartFile.fromFile(labLogoPath)),
       );
     }
     if (regCertPath != null) {
