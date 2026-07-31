@@ -80,11 +80,15 @@ class _CreatePackageScreenState extends ConsumerState<CreatePackageScreen> {
       'lab_id': user?.id,
       'package_name': _nameController.text,
       'package_description': _descController.text,
-      'test_ids': _selectedTests.map((t) => t.testId).toList(),
+      'test_details': _selectedTests.map((t) => {
+        'test_id': t.testId,
+        'test_name': t.coreTestDetails?.testName ?? 'Unknown Test'
+      }).toList(),
       'package_sample_collection_time': _selectedSampleTime ?? "24 hours",
       'package_report_delivery_time': _selectedReportTime ?? "48 hours",
       'package_market_price': double.parse(_marketPriceController.text),
       'discount_percentage': double.tryParse(_discountController.text) ?? 0.0,
+      'package_final_price': _finalPrice,
     };
 
     await ref.read(packageProvider.notifier).createPackage(data);

@@ -99,14 +99,14 @@ class LabTestCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      "₹${test.marketPrice.toStringAsFixed(0)}",
+                      "₹${test.price.toStringAsFixed(0)}",
                       style: AppTextStyles.cardTitle.copyWith(
                         color: AppColors.primaryAccent,
                       ),
                     ),
                     if (test.discountPercent > 0)
                       Text(
-                        "₹${test.price.toStringAsFixed(0)}",
+                        "₹${test.marketPrice.toStringAsFixed(0)}",
                         style: AppTextStyles.caption.copyWith(
                           color: AppColors.textTertiary,
                           decoration: TextDecoration.lineThrough,

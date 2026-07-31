@@ -52,6 +52,8 @@ class ApiUrl {
   static String getOrdersByLab(String labId) => "$testPackageBookings/lab/$labId";
   static String getOrderDetails(String bookingId) => "$testPackageBookings/$bookingId";
   static String updateOrder(String bookingId) => "$testPackageBookings/status/$bookingId";
+  static String updateOrderDetails(String bookingId) => "$testPackageBookings/details/$bookingId";
+  static String deleteOrder(String bookingId) => "$testPackageBookings/$bookingId";
 
   // Helper for image URLs
   static String imageUrl(String path) => "http://192.168.0.222:8000/$path";

@@ -87,4 +87,40 @@ class OrderServices {
       throw Exception('Failed to update booking: $e');
     }
   }
+
+  /// DELETE /{booking_id} — delete a booking
+  Future<void> deleteOrder(String bookingId) async {
+    try {
+      await _dio.delete(ApiUrl.deleteOrder(bookingId));
+    } catch (e) {
+      throw Exception('Failed to delete booking: $e');
+    }
+  }
+
+  /// PUT /details/{booking_id} — edit common booking details
+  Future<Order> editOrderDetails(
+    String bookingId, {
+    String? patientName,
+    String? patientPhone,
+    String? patientAge,
+    double? totalPrice,
+    String? paymentMode,
+  }) async {
+    try {
+      final Map<String, dynamic> data = {};
+      if (patientName != null) data['patient_name'] = patientName;
+      if (patientPhone != null) data['patient_phone'] = patientPhone;
+      if (patientAge != null) data['patient_age'] = patientAge;
+      if (totalPrice != null) data['total_price'] = totalPrice;
+      if (paymentMode != null) data['payment_mode'] = paymentMode;
+
+      final response = await _dio.put(
+        ApiUrl.updateOrderDetails(bookingId),
+        data: data,
+      );
+      return Order.fromJson(response.data['booking']);
+    } catch (e) {
+      throw Exception('Failed to update booking details: $e');
+    }
+  }
 }

@@ -66,4 +66,38 @@ class OrderNotifier extends StateNotifier<OrderState> {
       throw Exception('Failed to upload report: $e');
     }
   }
+
+  /// Delete booking
+  Future<void> deleteOrder(String bookingId) async {
+    try {
+      await _orderServices.deleteOrder(bookingId);
+      await fetchOrders();
+    } catch (e) {
+      throw Exception('Failed to delete order: $e');
+    }
+  }
+
+  /// Edit booking details
+  Future<void> editOrderDetails(
+    String bookingId, {
+    String? patientName,
+    String? patientPhone,
+    String? patientAge,
+    double? totalPrice,
+    String? paymentMode,
+  }) async {
+    try {
+      await _orderServices.editOrderDetails(
+        bookingId,
+        patientName: patientName,
+        patientPhone: patientPhone,
+        patientAge: patientAge,
+        totalPrice: totalPrice,
+        paymentMode: paymentMode,
+      );
+      await fetchOrders();
+    } catch (e) {
+      throw Exception('Failed to edit order details: $e');
+    }
+  }
 }

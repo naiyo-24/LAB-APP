@@ -9,6 +9,7 @@ import '../../providers/order_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/bill_generator.dart';
 import 'cancellation_bottomsheet.dart';
+import 'edit_order_dialog.dart';
 
 class OrderTableCard extends ConsumerWidget {
   final List<Order> orders;
@@ -205,17 +206,7 @@ class OrderTableCard extends ConsumerWidget {
                   ),
                   size: ColumnSize.S,
                 ),
-                DataColumn2(
-                  label: Text(
-                    'TYPE',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                  size: ColumnSize.S,
-                ),
+
                 DataColumn2(
                   label: Text(
                     'TESTS',
@@ -238,17 +229,7 @@ class OrderTableCard extends ConsumerWidget {
                   ),
                   size: ColumnSize.M,
                 ),
-                DataColumn2(
-                  label: Text(
-                    'ADDRESS',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                  size: ColumnSize.L,
-                ),
+
                 DataColumn2(
                   label: Text(
                     'SUB TOTAL',
@@ -359,6 +340,7 @@ class OrderTableCard extends ConsumerWidget {
                 if (order.patientDetails.isNotEmpty) {
                   patientName =
                       order.patientDetails.first['full_name']?.toString() ??
+                      order.patientDetails.first['name']?.toString() ??
                       'N/A';
                   patientPhone =
                       order.patientDetails.first['phone_number']?.toString() ??
@@ -367,20 +349,12 @@ class OrderTableCard extends ConsumerWidget {
 
                 // Extract test names
                 String tests = order.bookedItems
-                    .map((item) => item['item_name']?.toString() ?? '')
+                    .map((item) => item['item_name']?.toString() ?? item['test_name']?.toString() ?? '')
                     .where((name) => name.isNotEmpty)
                     .join(', ');
                 if (tests.isEmpty) tests = 'N/A';
 
-                // Extract address
-                String addressStr = 'N/A';
-                if (order.sampleCollectionAddress.isNotEmpty) {
-                  final addrParts = [
-                    order.sampleCollectionAddress['address_1']?.toString(),
-                    order.sampleCollectionAddress['street_address']?.toString(),
-                  ].where((s) => s != null && s.isNotEmpty).toList();
-                  if (addrParts.isNotEmpty) addressStr = addrParts.join(', ');
-                }
+
 
                 final statusColor = _getStatusColor(order.bookingStatus);
 
@@ -434,17 +408,7 @@ class OrderTableCard extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    // Booking Type
-                    DataCell(
-                      Text(
-                        order.bookingType.replaceAll('_', ' ').toUpperCase(),
-                        style: TextStyle(
-                          color: Colors.grey.shade800,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
+
                     // Tests
                     DataCell(
                       Text(
@@ -483,18 +447,7 @@ class OrderTableCard extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    // Address
-                    DataCell(
-                      Text(
-                        addressStr,
-                        style: TextStyle(
-                          color: Colors.grey.shade800,
-                          fontSize: 13,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
+
                     // Sub Total Amount
                     DataCell(
                       Text(
@@ -653,8 +606,10 @@ class OrderTableCard extends ConsumerWidget {
                     ),
                     // Actions
                     DataCell(
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
                         children: [
                           Tooltip(
                             message: 'Upload Report',
@@ -699,10 +654,90 @@ class OrderTableCard extends ConsumerWidget {
                               ),
                             ),
                           ),
+                          const SizedBox(width: 8),
+                          Tooltip(
+                            message: 'Edit Order',
+                            child: InkWell(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (ctx) => EditOrderDialog(order: order),
+                                );
+                              },
+                              borderRadius: BorderRadius.circular(8),
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.orange.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  IconsaxPlusLinear.edit,
+                                  color: Colors.orange,
+                                  size: 18,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Tooltip(
+                            message: 'Delete Order',
+                            child: InkWell(
+                              onTap: () async {
+                                final confirm = await showDialog<bool>(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    title: const Text('Delete Order'),
+                                    content: const Text('Are you sure you want to delete this order?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(ctx, false),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(ctx, true),
+                                        child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                                if (confirm == true) {
+                                  try {
+                                    await ref.read(orderNotifierProvider.notifier).deleteOrder(order.bookingId);
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('Order deleted successfully')),
+                                      );
+                                    }
+                                  } catch (e) {
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('Failed to delete order: $e'), backgroundColor: Colors.red),
+                                      );
+                                    }
+                                  }
+                                }
+                              },
+                              borderRadius: BorderRadius.circular(8),
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.red.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  IconsaxPlusLinear.trash,
+                                  color: Colors.red,
+                                  size: 18,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                  ],
+                  ),
+                ],
                 );
               }).toList(),
             ),
