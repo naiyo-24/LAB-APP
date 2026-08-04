@@ -84,7 +84,7 @@ class LabTestCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            "${test.coreTestDetails?.parameters.length ?? 0} Parameters",
+                            "${test.coreTestDetails?.numberOfParameters ?? 0} Parameters",
                             style: AppTextStyles.caption.copyWith(
                               color: AppColors.textSecondary,
                             ),

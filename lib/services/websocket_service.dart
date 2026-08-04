@@ -11,13 +11,14 @@ class WebSocketService {
   WebSocketChannel? _channel;
   final String labId;
   final Ref ref;
+  bool _isDisposed = false;
 
   WebSocketService({required this.labId, required this.ref}) {
     _connect();
   }
 
   void _connect() {
-    if (labId.isEmpty) return;
+    if (labId.isEmpty || _isDisposed) return;
 
     final wsUrl = Uri.parse('ws://192.168.0.222:8000/ws/labs/$labId');
     _channel = WebSocketChannel.connect(wsUrl);
@@ -49,6 +50,7 @@ class WebSocketService {
         }
       },
       onDone: () {
+        if (_isDisposed) return;
         debugPrint('WebSocket closed, attempting reconnect...');
         Future.delayed(const Duration(seconds: 5), _connect);
       },
@@ -59,6 +61,7 @@ class WebSocketService {
   }
 
   void dispose() {
+    _isDisposed = true;
     _channel?.sink.close();
   }
 }

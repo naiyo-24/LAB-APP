@@ -19,6 +19,7 @@ class _EditOrderDialogState extends ConsumerState<EditOrderDialog> {
   late TextEditingController _ageController;
   late TextEditingController _priceController;
   String _paymentMode = 'cod';
+  String _paymentStatus = 'pending';
   bool _isLoading = false;
 
   @override
@@ -40,6 +41,7 @@ class _EditOrderDialogState extends ConsumerState<EditOrderDialog> {
     _ageController = TextEditingController(text: currentAge);
     _priceController = TextEditingController(text: widget.order.totalAmountToBePaid.toString());
     _paymentMode = widget.order.paymentMode.toLowerCase() == 'online' ? 'online' : 'cod';
+    _paymentStatus = widget.order.paymentStatus.toLowerCase() == 'paid' ? 'paid' : 'pending';
   }
 
   @override
@@ -67,6 +69,7 @@ class _EditOrderDialogState extends ConsumerState<EditOrderDialog> {
             patientAge: _ageController.text.trim(),
             totalPrice: price,
             paymentMode: _paymentMode,
+            paymentStatus: _paymentStatus,
           );
 
       if (mounted) {
@@ -139,6 +142,20 @@ class _EditOrderDialogState extends ConsumerState<EditOrderDialog> {
                 onChanged: (val) {
                   if (val != null) {
                     setState(() => _paymentMode = val);
+                  }
+                },
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: _paymentStatus,
+                decoration: const InputDecoration(labelText: 'Payment Status'),
+                items: const [
+                  DropdownMenuItem(value: 'pending', child: Text('Pending (Unpaid)')),
+                  DropdownMenuItem(value: 'paid', child: Text('Paid')),
+                ],
+                onChanged: (val) {
+                  if (val != null) {
+                    setState(() => _paymentStatus = val);
                   }
                 },
               ),

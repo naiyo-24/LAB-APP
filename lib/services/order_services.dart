@@ -73,9 +73,9 @@ class OrderServices {
       if (bookingStatus != null) {
         data['new_status'] = bookingStatus;
       }
-      
-      // Note: The new backend doesn't currently support cancellation reason, lab note, or report files in this endpoint.
-      // We will only send the new_status for now.
+      if (cancellationReason != null) {
+        data['cancellation_reason'] = cancellationReason;
+      }
 
       final response = await _dio.put(
         ApiUrl.updateOrder(bookingId),
@@ -105,6 +105,7 @@ class OrderServices {
     String? patientAge,
     double? totalPrice,
     String? paymentMode,
+    String? paymentStatus,
   }) async {
     try {
       final Map<String, dynamic> data = {};
@@ -113,6 +114,7 @@ class OrderServices {
       if (patientAge != null) data['patient_age'] = patientAge;
       if (totalPrice != null) data['total_price'] = totalPrice;
       if (paymentMode != null) data['payment_mode'] = paymentMode;
+      if (paymentStatus != null) data['payment_status'] = paymentStatus;
 
       final response = await _dio.put(
         ApiUrl.updateOrderDetails(bookingId),

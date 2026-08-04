@@ -5,6 +5,7 @@ class CoreLabTest {
   final String sampleType;
   final String? description;
   final List<String> parameters;
+  final int numberOfParameters;
   final List<String> precautions;
   final String? testPhotoUrl;
 
@@ -15,6 +16,7 @@ class CoreLabTest {
     required this.sampleType,
     this.description,
     required this.parameters,
+    this.numberOfParameters = 0,
     required this.precautions,
     this.testPhotoUrl,
   });
@@ -27,6 +29,7 @@ class CoreLabTest {
       sampleType: json['sample_type'] ?? '',
       description: json['description'],
       parameters: [], // Deprecated in new backend, has number_of_parameters
+      numberOfParameters: json['number_of_parameters'] ?? json['numberOfParameters'] ?? 0,
       precautions: json['pre_test_info'] != null ? [json['pre_test_info']] : [],
       testPhotoUrl: json['test_photo_url'],
     );

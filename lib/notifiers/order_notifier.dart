@@ -85,6 +85,7 @@ class OrderNotifier extends StateNotifier<OrderState> {
     String? patientAge,
     double? totalPrice,
     String? paymentMode,
+    String? paymentStatus,
   }) async {
     try {
       await _orderServices.editOrderDetails(
@@ -94,6 +95,7 @@ class OrderNotifier extends StateNotifier<OrderState> {
         patientAge: patientAge,
         totalPrice: totalPrice,
         paymentMode: paymentMode,
+        paymentStatus: paymentStatus,
       );
       await fetchOrders();
     } catch (e) {

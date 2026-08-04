@@ -67,14 +67,8 @@ class _CancellationBottomSheetState extends State<CancellationBottomSheet> {
                   ),
                   onPressed: () {
                     final reason = _reasonController.text.trim();
-                    if (reason.isNotEmpty) {
-                      Navigator.pop(context);
-                      widget.onConfirm(reason);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Reason cannot be empty')),
-                      );
-                    }
+                    Navigator.pop(context);
+                    widget.onConfirm(reason);
                   },
                   child: const Text(
                     'Confirm Cancel',

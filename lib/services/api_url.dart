@@ -57,4 +57,11 @@ class ApiUrl {
 
   // Helper for image URLs
   static String imageUrl(String path) => "http://192.168.0.222:8000/$path";
+
+  // Earnings
+  static String getEarnings(String labId) => "$baseUrl/rest/earnings/lab/$labId";
+  static String getEarningsSummary(String labId) => "$baseUrl/rest/earnings/lab/$labId/summary";
+
+  // Dashboard Analytics
+  static String getDashboardAnalytics(String labId) => "$baseUrl/rest/dashboard/lab/$labId";
 }

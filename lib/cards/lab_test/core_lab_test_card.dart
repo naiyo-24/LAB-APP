@@ -99,7 +99,7 @@ class CoreLabTestCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            "${test.parameters.length} Parameters",
+                            "${test.numberOfParameters} Parameters",
                             style: AppTextStyles.caption.copyWith(
                               color: AppColors.textSecondary,
                             ),

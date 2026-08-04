@@ -19,6 +19,7 @@ class Order {
   final double labPayableAmount;
   
   final String paymentMode;
+  final String paymentStatus;
   final String? transactionId;
   final String? transactionHash;
   final String transactionStatus;
@@ -54,6 +55,7 @@ class Order {
     required this.totalAmountToBePaid,
     required this.labPayableAmount,
     required this.paymentMode,
+    required this.paymentStatus,
     this.transactionId,
     this.transactionHash,
     required this.transactionStatus,
@@ -88,6 +90,7 @@ class Order {
       totalAmountToBePaid: (json['total_amount_to_be_paid'] ?? json['total_price'] ?? 0.0).toDouble(),
       labPayableAmount: (json['lab_payable_amount'] ?? 0.0).toDouble(),
       paymentMode: json['payment_mode'] ?? '',
+      paymentStatus: json['payment_status'] ?? 'pending',
       transactionId: json['transaction_id'],
       transactionHash: json['transaction_hash'],
       transactionStatus: json['transaction_status'] ?? '',
@@ -123,6 +126,7 @@ class Order {
       'total_amount_to_be_paid': totalAmountToBePaid,
       'lab_payable_amount': labPayableAmount,
       'payment_mode': paymentMode,
+      'payment_status': paymentStatus,
       'transaction_id': transactionId,
       'transaction_hash': transactionHash,
       'transaction_status': transactionStatus,

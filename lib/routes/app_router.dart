@@ -20,6 +20,8 @@ import '../screens/package/my_test_packages_screen.dart';
 import '../screens/package/create_package_screen.dart';
 import '../screens/about_us/about_us_screen.dart';
 import '../routes/order/order_management_screen.dart';
+import '../screens/earnings/earnings_screen.dart';
+import '../screens/dashboard/dashboard_screen.dart';
 import '../widgets/main_screen_pop_scope.dart';
 
 class AppRouter {
@@ -39,10 +41,7 @@ class AppRouter {
       // Main App Routes
       GoRoute(
         path: '/dashboard',
-        builder: (context, state) => const PlaceholderScreen(
-          title: 'Dashboard',
-          subtitle: 'Overview of your lab',
-        ),
+        builder: (context, state) => const DashboardScreen(),
       ),
       GoRoute(
         path: '/inventory',
@@ -84,10 +83,7 @@ class AppRouter {
       ),
       GoRoute(
         path: '/earnings',
-        builder: (context, state) => const PlaceholderScreen(
-          title: 'Earning and Payments',
-          subtitle: 'Financial summary',
-        ),
+        builder: (context, state) => const EarningsScreen(),
       ),
       GoRoute(
         path: '/profile',
